@@ -23,7 +23,7 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Hey taco lover! To find the best tacos near you, we'll need to briefly use your current location.</string>
+	<string>Hey taco lover! To find the best tacos near you, we&apos;ll need to briefly use your current location.</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

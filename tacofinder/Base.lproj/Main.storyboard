@@ -44,11 +44,57 @@
                                 <rect key="frame" x="122" y="248" width="130" height="90"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
+                            <view alpha="0.94999999999999996" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="0d9-0I-8Cm">
+                                <rect key="frame" x="68" y="194" width="239" height="279"/>
+                                <subviews>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="TacoAppSAD" translatesAutoresizingMaskIntoConstraints="NO" id="GrD-N8-0p1">
+                                        <rect key="frame" x="0.0" y="8" width="239" height="96"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="96" id="thG-lh-yeM"/>
+                                        </constraints>
+                                    </imageView>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Where are you? Enable location services in the settings app to help us find you some tacos!" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="omG-rb-FXP">
+                                        <rect key="frame" x="0.0" y="112" width="239" height="119"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Sm0-mg-CKw">
+                                        <rect key="frame" x="60" y="239" width="119" height="30"/>
+                                        <state key="normal" title="Go To Settings"/>
+                                        <connections>
+                                            <action selector="goToSettings:" destination="BYZ-38-t0r" eventType="touchUpInside" id="7OD-NN-0c5"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstItem="GrD-N8-0p1" firstAttribute="leading" secondItem="0d9-0I-8Cm" secondAttribute="leading" id="3LN-9z-3we"/>
+                                    <constraint firstAttribute="bottom" secondItem="omG-rb-FXP" secondAttribute="bottom" constant="48" id="AXg-us-i6P"/>
+                                    <constraint firstAttribute="bottom" secondItem="Sm0-mg-CKw" secondAttribute="bottom" constant="10" id="Gvx-ia-6uL"/>
+                                    <constraint firstItem="Sm0-mg-CKw" firstAttribute="leading" secondItem="0d9-0I-8Cm" secondAttribute="leading" constant="60" id="HLM-jj-Y8Z"/>
+                                    <constraint firstItem="omG-rb-FXP" firstAttribute="leading" secondItem="0d9-0I-8Cm" secondAttribute="leading" id="Q1O-oJ-oGM"/>
+                                    <constraint firstItem="omG-rb-FXP" firstAttribute="top" secondItem="GrD-N8-0p1" secondAttribute="bottom" constant="8" id="cT5-AN-g43"/>
+                                    <constraint firstAttribute="trailing" secondItem="Sm0-mg-CKw" secondAttribute="trailing" constant="60" id="fM8-Ml-XU3"/>
+                                    <constraint firstAttribute="trailing" secondItem="omG-rb-FXP" secondAttribute="trailing" id="fQf-HK-dP9"/>
+                                    <constraint firstAttribute="trailing" secondItem="GrD-N8-0p1" secondAttribute="trailing" id="mbF-gw-UaT"/>
+                                    <constraint firstItem="GrD-N8-0p1" firstAttribute="top" secondItem="0d9-0I-8Cm" secondAttribute="top" constant="8" id="pD2-lj-Wcy"/>
+                                    <constraint firstAttribute="height" constant="279" id="ve7-en-kMn"/>
+                                    <constraint firstItem="GrD-N8-0p1" firstAttribute="centerX" secondItem="0d9-0I-8Cm" secondAttribute="centerX" id="wdY-NE-bOW"/>
+                                    <constraint firstItem="Sm0-mg-CKw" firstAttribute="top" secondItem="omG-rb-FXP" secondAttribute="bottom" constant="8" id="yec-ve-xex"/>
+                                </constraints>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="0d9-0I-8Cm" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="bvm-tm-Vgp"/>
+                            <constraint firstItem="0d9-0I-8Cm" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="68" id="xvv-vX-d0n"/>
+                            <constraint firstItem="0d9-0I-8Cm" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="ybS-jS-pqc"/>
+                        </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <connections>
+                        <outlet property="noLocationPopUp" destination="0d9-0I-8Cm" id="RcL-g9-Rgt"/>
                         <outlet property="tacoBottom" destination="AWb-dm-oEc" id="8Qq-d4-IoM"/>
                         <outlet property="tacoButtonOutlet" destination="eMG-KH-sXp" id="q97-Mv-CsQ"/>
                         <outlet property="tacoTop" destination="1j3-ar-8jd" id="HQD-46-gEQ"/>
@@ -57,7 +103,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-9" y="29"/>
+            <point key="canvasLocation" x="85.599999999999994" y="28.335832083958024"/>
         </scene>
         <!--Result View Controller-->
         <scene sceneID="HV1-jj-Hws">
@@ -163,6 +209,7 @@
         </scene>
     </scenes>
     <resources>
+        <image name="TacoAppSAD" width="839" height="839"/>
         <image name="TacoBottom" width="80" height="80"/>
         <image name="Tacotop" width="347" height="192"/>
     </resources>
