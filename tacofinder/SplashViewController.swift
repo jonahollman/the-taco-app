@@ -151,5 +151,10 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
         
     }
     
+    
+    @IBAction func goToLAGuide(_ sender: Any) {
+        
+    }
+    
 }
 
