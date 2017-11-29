@@ -17,12 +17,15 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
     
     @IBOutlet var noLocationPopUp: UIView!
     
+    @IBOutlet var losAngelesGuideButton: UIButton!
     var locationManager = CLLocationManager()
+    let losAngelesCoordinate = CLLocation(latitude: 34.0522, longitude: -118.2437)
     
     override func viewDidLoad() {
         super.viewDidLoad()
         noLocationPopUp.isHidden = true
         introAnimation()
+        checkForCity()
 
     }
 
@@ -34,6 +37,8 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
     func introAnimation() {
         
         tacoButtonOutlet.alpha = 0
+        losAngelesGuideButton.alpha = 0
+        losAngelesGuideButton.isHidden = true
         
         tacoTop.transform = CGAffineTransform(translationX: 0, y: -400)
         tacoBottom.transform = CGAffineTransform(translationX: 0, y: -400)
@@ -70,6 +75,33 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
             
         }
         
+    }
+    
+    func checkForCity() {
+        if CLLocationManager.locationServicesEnabled() {
+            if CLLocationManager.authorizationStatus() == .authorizedWhenInUse {
+                let latitude = locationManager.location?.coordinate.latitude
+                let longitude = locationManager.location?.coordinate.longitude
+                let currentCoordinates = CLLocation(latitude: latitude!, longitude: longitude!)
+                let distanceInMiles = currentCoordinates.distance(from: losAngelesCoordinate) / 1609
+                if distanceInMiles <= 30 {
+                    
+                    showCityGuide()
+                }
+            }
+        }
+    }
+    
+    func showCityGuide() {
+        UIView.animate(withDuration: 0.8, delay: 1.9, options: [], animations: {
+            self.tacoButtonOutlet.transform = CGAffineTransform(translationX: 0, y: -70)
+            self.tacoTop.transform = CGAffineTransform(translationX: 0, y: -70)
+            self.tacoBottom.transform = CGAffineTransform(translationX: 0, y: -70)
+            self.losAngelesGuideButton.isHidden = false
+            self.losAngelesGuideButton.alpha = 1.0
+        }) { (true) in
+            return
+        }
     }
     
     func showNoLocationPopUp() {

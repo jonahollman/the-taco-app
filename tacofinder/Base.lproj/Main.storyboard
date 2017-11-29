@@ -23,13 +23,14 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="TacoBottom" translatesAutoresizingMaskIntoConstraints="NO" id="AWb-dm-oEc">
-                                <rect key="frame" x="141" y="330" width="92" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="TacoBottom" translatesAutoresizingMaskIntoConstraints="NO" id="AWb-dm-oEc">
+                                <rect key="frame" x="147" y="261" width="80" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="rDK-wl-QAa"/>
+                                </constraints>
                             </imageView>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="bottom" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eMG-KH-sXp">
-                                <rect key="frame" x="84" y="225" width="206" height="217"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="bottom" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eMG-KH-sXp">
+                                <rect key="frame" x="104" y="301" width="167" height="65"/>
                                 <fontDescription key="fontDescription" name="AvenirNext-Regular" family="Avenir Next" pointSize="28"/>
                                 <inset key="contentEdgeInsets" minX="0.0" minY="0.0" maxX="0.0" maxY="26"/>
                                 <size key="titleShadowOffset" width="1" height="1"/>
@@ -41,10 +42,17 @@
                                     <action selector="tacosTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Rhf-Ey-Kwy"/>
                                 </connections>
                             </button>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="Tacotop" translatesAutoresizingMaskIntoConstraints="NO" id="1j3-ar-8jd">
-                                <rect key="frame" x="122" y="248" width="130" height="90"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Tacotop" translatesAutoresizingMaskIntoConstraints="NO" id="1j3-ar-8jd">
+                                <rect key="frame" x="14" y="166" width="347" height="90"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="90" id="NZc-od-OC7"/>
+                                </constraints>
                             </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="o7q-xR-9bO">
+                                <rect key="frame" x="56" y="391" width="262" height="36"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                <state key="normal" title="Check out the L.A. Taco Guide"/>
+                            </button>
                             <view alpha="0.94999999999999996" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="0d9-0I-8Cm">
                                 <rect key="frame" x="68" y="194" width="239" height="279"/>
                                 <subviews>
@@ -60,7 +68,7 @@
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Sm0-mg-CKw">
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="wordWrap" translatesAutoresizingMaskIntoConstraints="NO" id="Sm0-mg-CKw">
                                         <rect key="frame" x="60" y="239" width="119" height="30"/>
                                         <state key="normal" title="Go To Settings"/>
                                         <connections>
@@ -88,13 +96,22 @@
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
+                            <constraint firstItem="eMG-KH-sXp" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="3GF-RQ-s4b"/>
+                            <constraint firstItem="AWb-dm-oEc" firstAttribute="top" secondItem="1j3-ar-8jd" secondAttribute="bottom" constant="5" id="ESX-TX-fBp"/>
+                            <constraint firstItem="eMG-KH-sXp" firstAttribute="top" secondItem="AWb-dm-oEc" secondAttribute="bottom" constant="10" id="OpK-zv-wP8"/>
+                            <constraint firstItem="o7q-xR-9bO" firstAttribute="top" secondItem="AWb-dm-oEc" secondAttribute="bottom" constant="100" id="R5d-pQ-gXe"/>
                             <constraint firstItem="0d9-0I-8Cm" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="bvm-tm-Vgp"/>
+                            <constraint firstItem="o7q-xR-9bO" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="cyC-Pa-HWI"/>
+                            <constraint firstItem="eMG-KH-sXp" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="gvS-es-X7U"/>
+                            <constraint firstItem="1j3-ar-8jd" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="izt-63-G7i"/>
+                            <constraint firstItem="AWb-dm-oEc" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="xbZ-t9-qIR"/>
                             <constraint firstItem="0d9-0I-8Cm" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="68" id="xvv-vX-d0n"/>
                             <constraint firstItem="0d9-0I-8Cm" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="ybS-jS-pqc"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <connections>
+                        <outlet property="losAngelesGuideButton" destination="o7q-xR-9bO" id="YFb-dm-Jt6"/>
                         <outlet property="noLocationPopUp" destination="0d9-0I-8Cm" id="RcL-g9-Rgt"/>
                         <outlet property="tacoBottom" destination="AWb-dm-oEc" id="8Qq-d4-IoM"/>
                         <outlet property="tacoButtonOutlet" destination="eMG-KH-sXp" id="q97-Mv-CsQ"/>
