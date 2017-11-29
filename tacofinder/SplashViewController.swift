@@ -153,7 +153,7 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
     
     
     @IBAction func goToLAGuide(_ sender: Any) {
-        
+        self.present(LAGuideViewController, animated: true, completion: nil)
     }
     
 }

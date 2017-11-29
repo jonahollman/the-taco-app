@@ -28,7 +28,6 @@ class LAGuideViewController: UIViewController, UITableViewDelegate, UITableViewD
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = top50Table.dequeueReusableCell(withIdentifier: "cell") as! Top50TableViewCell
         
-        
         return cell
     }
     
