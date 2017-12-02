@@ -372,6 +372,15 @@
                                     <outlet property="delegate" destination="TC2-Wc-abW" id="iqM-QW-zfS"/>
                                 </connections>
                             </tableView>
+                            <navigationBar contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ksd-C4-BwP">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                <items>
+                                    <navigationItem title="Favorites" id="jS8-zg-Ui7">
+                                        <barButtonItem key="leftBarButtonItem" title="Back" id="nhf-48-8SI"/>
+                                    </navigationItem>
+                                </items>
+                            </navigationBar>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <viewLayoutGuide key="safeArea" id="8By-WD-WwL"/>
