@@ -8,18 +8,24 @@
 
 import UIKit
 import CoreLocation
+import CDYelpFusionKit
 
 class SplashViewController: UIViewController, CLLocationManagerDelegate {
     
     @IBOutlet var tacoTop: UIImageView!
     @IBOutlet var tacoBottom: UIImageView!
     @IBOutlet var tacoButtonOutlet: UIButton!
-    
     @IBOutlet var noLocationPopUp: UIView!
-    
     @IBOutlet var losAngelesGuideButton: UIButton!
+    
     var locationManager = CLLocationManager()
+    let appDelegate = UIApplication.shared.delegate as! AppDelegate
     let losAngelesCoordinate = CLLocation(latitude: 34.0522, longitude: -118.2437)
+    var token = UserDefaults.standard.string(forKey: "token")
+    var latitude = CLLocationDegrees()
+    var longitude = CLLocationDegrees()
+    
+    var tacoResults = [CDYelpBusiness]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -80,12 +86,11 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
     func checkForCity() {
         if CLLocationManager.locationServicesEnabled() {
             if CLLocationManager.authorizationStatus() == .authorizedWhenInUse {
-                let latitude = locationManager.location?.coordinate.latitude
-                let longitude = locationManager.location?.coordinate.longitude
-                let currentCoordinates = CLLocation(latitude: latitude!, longitude: longitude!)
+                self.latitude = (locationManager.location?.coordinate.latitude)!
+                self.longitude = (locationManager.location?.coordinate.longitude)!
+                let currentCoordinates = CLLocation(latitude: latitude, longitude: longitude)
                 let distanceInMiles = currentCoordinates.distance(from: losAngelesCoordinate) / 1609
                 if distanceInMiles <= 30 {
-                    
                     showCityGuide()
                 }
             }
@@ -142,6 +147,7 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
     @IBAction func tacosTapped(_ sender: Any) {
         
         checkForLocationPermission()
+        searchForTacos()
         
     /*    UIView.animate(withDuration: 1.1, animations: {
             self.tacoTop.transform = CGAffineTransform(scaleX: 12, y: 12)
@@ -151,11 +157,29 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
         
     }
     
+    func searchForTacos() {
+        
+        appDelegate.apiClient.searchBusinesses(byTerm: "tacos", location: nil, latitude: self.latitude , longitude: self.longitude, radius: nil, categories: nil, locale: nil, limit: nil, offset: nil, sortBy: .distance, priceTiers: nil, openNow: true, openAt: nil, attributes: nil) { (response) in
+            if let response = response {
+                self.tacoResults = response.businesses!
+                self.performSegue(withIdentifier: "splashToResult", sender: self)
+            }
+        }
+        
+    }
+    
     
     @IBAction func goToLAGuide(_ sender: Any) {
         let laGuide = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "laGuide")
         
         self.present(laGuide, animated: true, completion: nil)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.destination is ResultViewController {
+            let vc = segue.destination as! ResultViewController
+            vc.tacoResults = self.tacoResults
+        }
     }
     
 }

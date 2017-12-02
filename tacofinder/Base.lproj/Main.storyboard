@@ -262,6 +262,9 @@
                                 <constraints>
                                     <constraint firstAttribute="height" constant="200" id="Wbf-Mw-aYl"/>
                                 </constraints>
+                                <connections>
+                                    <outlet property="delegate" destination="3kh-Y3-Id0" id="AzD-NI-nwQ"/>
+                                </connections>
                             </mapView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Taqueria Ollman" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DZu-Ll-yYJ">
                                 <rect key="frame" x="8" y="208" width="359" height="45"/>
@@ -279,8 +282,8 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="View on Yelp"/>
                             </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Address" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KCV-VO-muz">
-                                <rect key="frame" x="155" y="424" width="63" height="21"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Address" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KCV-VO-muz">
+                                <rect key="frame" x="91" y="424" width="193" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
@@ -309,11 +312,30 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="31"/>
                                 <state key="normal" title="Go"/>
+                                <connections>
+                                    <action selector="goToTaco:" destination="3kh-Y3-Id0" eventType="touchUpInside" id="19X-ct-wY9"/>
+                                </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8f1-9M-DvF">
-                                <rect key="frame" x="256" y="349" width="103" height="30"/>
+                                <rect key="frame" x="185" y="349" width="174" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="619-929-9706"/>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="B9M-TJ-Jq1">
+                                <rect key="frame" x="292" y="578" width="32" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Next"/>
+                                <connections>
+                                    <action selector="nextResult:" destination="3kh-Y3-Id0" eventType="touchUpInside" id="Vii-7Y-IFB"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tL3-RZ-BJz">
+                                <rect key="frame" x="36" y="578" width="62" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Favorites"/>
+                                <connections>
+                                    <action selector="goToFavorites:" destination="3kh-Y3-Id0" eventType="touchUpInside" id="90Y-Yz-eMH"/>
+                                </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="0.80428272485733032" blue="0.36377298831939697" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -324,6 +346,17 @@
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="Kud-Vn-He8"/>
                     </view>
+                    <connections>
+                        <outlet property="favoritesIcon" destination="U3u-LJ-naO" id="Wsa-Db-Z6R"/>
+                        <outlet property="locationMap" destination="BvK-ET-9X8" id="0TC-aP-7De"/>
+                        <outlet property="tacoAddress" destination="KCV-VO-muz" id="qQk-bB-jeE"/>
+                        <outlet property="tacoFavoriteLabel" destination="YwG-tl-IEf" id="cNl-sY-psb"/>
+                        <outlet property="tacoHours" destination="nVf-8x-owI" id="Kfs-GR-UWq"/>
+                        <outlet property="tacoName" destination="DZu-Ll-yYJ" id="pic-8o-oUc"/>
+                        <outlet property="tacoPhone" destination="8f1-9M-DvF" id="Tpi-4t-Ydm"/>
+                        <outlet property="yelpLink" destination="Jhx-aR-59g" id="WBa-Jg-DsW"/>
+                        <outlet property="yelpStars" destination="yOS-cE-N1Y" id="Wg8-7u-9j1"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="tMT-Xj-Rn1" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -332,7 +365,7 @@
         <!--Favorites View Controller-->
         <scene sceneID="dYf-gF-Xep">
             <objects>
-                <viewController title="Favorites View Controller" id="TC2-Wc-abW" customClass="FavoritesViewController" customModule="tacofinder" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="favorites" title="Favorites View Controller" useStoryboardIdentifierAsRestorationIdentifier="YES" id="TC2-Wc-abW" customClass="FavoritesViewController" customModule="tacofinder" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="aO5-xr-7tP">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -391,7 +424,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="FX9-UB-9dr" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1704.8" y="27.436281859070466"/>
+            <point key="canvasLocation" x="1598" y="28"/>
         </scene>
     </scenes>
     <resources>
