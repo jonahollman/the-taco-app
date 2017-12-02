@@ -31,7 +31,6 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         super.viewDidLoad()
 
         setupFirstResult()
-        setupMap()
         
     }
     
@@ -39,16 +38,17 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         let firstTaco = tacoResults[1]
         self.tacoName.text = firstTaco.name
         self.tacoAddress.text = """
-            \(firstTaco.location?.addressOne)
-            \(firstTaco.location?.addressTwo)
-            \(firstTaco.location?.addressThree)
+            \(firstTaco.location!.addressOne ?? "")
+            \(firstTaco.location!.addressTwo ?? "")
+            \(firstTaco.location!.addressThree ?? "")
             """
        // self.tacoHours.text = firstTaco.hours![0].open![0].end as? String
         self.tacoPhone.setTitle(firstTaco.displayPhone, for: .normal)
         self.tacoLocation = firstTaco.coordinates
+        setupMap(location: firstTaco.coordinates!)
     }
     
-    func setupMap() {
+    func setupMap(location: CDYelpCoordinates) {
         locationMap.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         locationManager.requestWhenInUseAuthorization()
@@ -58,8 +58,11 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
             self.locationManager.startUpdatingLocation()
         }
         
-        let center = CLLocationCoordinate2D(latitude: (self.tacoLocation?.latitude)!, longitude: (self.tacoLocation?.longitude)!)
-        var region = MKCoordinateRegion(center: center, span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05))
+        let center = CLLocationCoordinate2D(latitude: (location.latitude)!, longitude: (location.longitude)!)
+        let pin = MKPointAnnotation()
+        pin.coordinate = center
+        locationMap.addAnnotation(pin)
+        let region = MKCoordinateRegion(center: center, span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))
         locationMap.setRegion(region, animated: false)
     }
     
