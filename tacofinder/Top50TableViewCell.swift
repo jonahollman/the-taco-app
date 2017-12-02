@@ -16,6 +16,8 @@ class Top50TableViewCell: UITableViewCell {
     @IBOutlet var address: UILabel!
     @IBOutlet var recommended: UILabel!
     @IBOutlet var descriptionImage: UIImageView!
+    @IBOutlet var goButton: UIButton!
+    @IBOutlet var favoritesIcon: UIImageView!
     
     override func awakeFromNib() {
         super.awakeFromNib()

@@ -153,7 +153,9 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
     
     
     @IBAction func goToLAGuide(_ sender: Any) {
-        self.present(LAGuideViewController, animated: true, completion: nil)
+        let laGuide = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "laGuide")
+        
+        self.present(laGuide, animated: true, completion: nil)
     }
     
 }
