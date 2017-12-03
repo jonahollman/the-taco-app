@@ -118,7 +118,7 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
     }
     
     func showCityGuide() {
-        UIView.animate(withDuration: 0.8, delay: 1.9, options: [], animations: {
+        UIView.animate(withDuration: 0.8, delay: 2.0, options: [], animations: {
             self.tacoButtonOutlet.transform = CGAffineTransform(translationX: 0, y: -70)
             self.tacoTop.transform = CGAffineTransform(translationX: 0, y: -70)
             self.tacoBottom.transform = CGAffineTransform(translationX: 0, y: -70)

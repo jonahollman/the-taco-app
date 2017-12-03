@@ -20,6 +20,7 @@ class FavoritesViewController: UIViewController, UITableViewDataSource, UITableV
     var resultNumber = Int()
     var tacoResults = [CDYelpBusiness]()
     
+    @IBOutlet var emptyTableAlert: UIView!
     var locationManager = CLLocationManager()
     
     override func viewDidLoad() {
@@ -29,6 +30,14 @@ class FavoritesViewController: UIViewController, UITableViewDataSource, UITableV
             favorites = UserDefaults.standard.object(forKey: "favorites") as! [String]
             favoriteLats = UserDefaults.standard.object(forKey: "favoriteLats") as! [CLLocationDegrees]
             favoriteLongs = UserDefaults.standard.object(forKey: "favoriteLongs") as! [CLLocationDegrees]
+        } else {
+            self.hideTableAndDisplayAlert()
+        }
+        
+        if favorites.count == 0 {
+            self.hideTableAndDisplayAlert()
+        } else {
+            self.showTableAndHideAlert()
         }
         
         favoritesTable.delegate = self
@@ -42,6 +51,19 @@ class FavoritesViewController: UIViewController, UITableViewDataSource, UITableV
             self.locationManager.startUpdatingLocation()
         }
 
+    }
+    
+    func hideTableAndDisplayAlert() {
+        self.favoritesTable.isHidden = true
+        self.emptyTableAlert.isHidden = false
+        self.emptyTableAlert.layer.cornerRadius = 10
+        self.emptyTableAlert.layer.borderWidth = 2
+        self.emptyTableAlert.layer.borderColor = UIColor.black.cgColor
+    }
+    
+    func showTableAndHideAlert() {
+        self.favoritesTable.isHidden = false
+        self.emptyTableAlert.isHidden = true
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

@@ -166,6 +166,7 @@ class LAGuideViewController: UIViewController, UITableViewDelegate, UITableViewD
         cell.openStatus.layer.cornerRadius = 5
         cell.address.layer.cornerRadius = 5
         cell.goButton.layer.cornerRadius = 5
+        cell.nameContainer.layer.cornerRadius = 5
         
         if cell.openStatus.text == "Open" {
             cell.openStatus.backgroundColor = UIColor.green

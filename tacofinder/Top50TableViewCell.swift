@@ -19,6 +19,7 @@ class Top50TableViewCell: UITableViewCell {
     @IBOutlet var goButton: UIButton!
     @IBOutlet var favoritesIcon: UIButton!
     @IBOutlet var rankContainer: UIView!
+    @IBOutlet var nameContainer: UIView!
     
     override func awakeFromNib() {
         super.awakeFromNib()
