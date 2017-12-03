@@ -16,6 +16,7 @@ class LAGuideViewController: UIViewController, UITableViewDelegate, UITableViewD
     var top50Names = [String]()
     var top50Opens = [String]()
     var top50Dictionary = [[String: String]]()
+    var favorites = [String]()
     
 
     override func viewDidLoad() {
@@ -25,27 +26,20 @@ class LAGuideViewController: UIViewController, UITableViewDelegate, UITableViewD
         top50Table.dataSource = self
         
         fetchGuide()
+        fetchFavorites()
     }
     
     func fetchGuide() {
         
         let url = URL(string: "https://docs.google.com/spreadsheets/d/e/2PACX-1vT7AS8-joC6aaPByYJT00uUDQ9ueyQ08bBKOuZSQPCBCe4K-hOLKzgsgcOw5JQELXfGjatmG_mTLrSD/pubhtml?gid=0&single=true")
         
-        //Alamofire.request(url, method: .get, parameters: [], encoding: nil, headers: [])
         Alamofire.request(url!).responseString { (response) in
             print("\(response.result.isSuccess)")
             if let html = response.result.value {
                 self.parseHTML(html: html)
             }
         }
-        
-        //let task = URLSession.shared.dataTask(with: url!) {(data, response, error) in
-      //      print(NSString(data: data!, encoding: String.Encoding.RawValue))
-     //   }
-        
-     //   task.resume()
 
-        
     }
     
     func parseHTML(html: String) {
@@ -87,6 +81,15 @@ class LAGuideViewController: UIViewController, UITableViewDelegate, UITableViewD
 
     }
     
+    func fetchFavorites() {
+        if UserDefaults.standard.object(forKey: "favorites") != nil {
+            self.favorites = UserDefaults.standard.object(forKey: "favorites") as! [String]
+        }
+    }
+    
+    func updateUserDefaults() {
+        
+    }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.top50Dictionary.count
@@ -103,13 +106,12 @@ class LAGuideViewController: UIViewController, UITableViewDelegate, UITableViewD
         cell.rankContainer.layer.cornerRadius = cell.rankContainer.layer.frame.height / 2
         cell.name.text = top50Dictionary[indexPath.row]["name"]
         cell.openStatus.text = top50Dictionary[indexPath.row]["open"]
-        cell.address.text = top50Dictionary[indexPath.row]["hood"]
-        cell.recommended.text = "When we go, we order the \(top50Dictionary[indexPath.row]["rec"] ?? "")"
+        cell.address.setTitle(top50Dictionary[indexPath.row]["hood"], for: .normal)
+        cell.recommended.text = "\(top50Dictionary[indexPath.row]["rec"] ?? "Anything")"
         
-        let tap = UIGestureRecognizer(target: self, action: #selector(hoodToAddress))
         cell.address.isUserInteractionEnabled = true
-        cell.address.addGestureRecognizer(tap)
         cell.address.tag = indexPath.row
+        cell.address.addTarget(self, action: #selector(hoodToAddress), for: .touchUpInside)
 
         cell.openStatus.layer.cornerRadius = 5
         cell.address.layer.cornerRadius = 5
@@ -128,6 +130,12 @@ class LAGuideViewController: UIViewController, UITableViewDelegate, UITableViewD
             cell.descriptionImage.image = UIImage(named: "stand")
         }
         
+        if favorites.contains(top50Dictionary[indexPath.row]["name"]!) {
+            cell.favoritesIcon.setImage(UIImage(named: "heart-outline"), for: .normal)
+        } else {
+            cell.favoritesIcon.setImage(UIImage(named: "heart-outline-plus"), for: .normal)
+        }
+        
         if indexPath.row % 2 == 1 {
             cell.backgroundColor = UIColor.groupTableViewBackground
         }
@@ -135,9 +143,12 @@ class LAGuideViewController: UIViewController, UITableViewDelegate, UITableViewD
         return cell
     }
     
-    @objc func hoodToAddress(sender: UILabel) {
-        print("tapped")
-        print(top50Dictionary[sender.tag]["address"])
+    @objc func hoodToAddress(sender: UIButton) {
+        if sender.title(for: .normal) == top50Dictionary[sender.tag]["address"] {
+            sender.setTitle(top50Dictionary[sender.tag]["hood"], for: .normal)
+        } else {
+            sender.setTitle(top50Dictionary[sender.tag]["address"], for: .normal)
+        }
     }
     
 
