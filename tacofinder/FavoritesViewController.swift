@@ -91,6 +91,7 @@ class FavoritesViewController: UIViewController, UITableViewDataSource, UITableV
         UserDefaults.standard.set(self.favorites, forKey: "favorites")
         UserDefaults.standard.set(self.favoriteLats, forKey: "favoriteLats")
         UserDefaults.standard.set(self.favoriteLongs, forKey: "favoriteLongs")
+        print(favorites)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

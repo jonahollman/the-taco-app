@@ -125,9 +125,47 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         switch rating {
         case 0:
             self.yelpStars.image = UIImage.yelpStars(numberOfStars: CDYelpStars.zero, forSize: .regular)
+            self.yelpStars.image = UIImage(named: "regular_0")
+            break
+        case 1:
+            self.yelpStars.image = UIImage.yelpStars(numberOfStars: CDYelpStars.one, forSize: .regular)
+            self.yelpStars.image = UIImage(named: "regular_1")
+            break
+        case 1.5:
+            self.yelpStars.image = UIImage.yelpStars(numberOfStars: CDYelpStars.oneHalf, forSize: .regular)
+            self.yelpStars.image = UIImage(named: "regular_1_half")
+            break
+        case 2:
+            self.yelpStars.image = UIImage.yelpStars(numberOfStars: CDYelpStars.two, forSize: .regular)
+            self.yelpStars.image = UIImage(named: "regular_2")
+            break
+        case 2.5:
+            self.yelpStars.image = UIImage.yelpStars(numberOfStars: CDYelpStars.twoHalf, forSize: .regular)
+            self.yelpStars.image = UIImage(named: "regular_2_half")
+            break
+        case 3:
+            self.yelpStars.image = UIImage.yelpStars(numberOfStars: CDYelpStars.three, forSize: .regular)
+            self.yelpStars.image = UIImage(named: "regular_3")
+            break
+        case 3.5:
+            self.yelpStars.image = UIImage.yelpStars(numberOfStars: CDYelpStars.threeHalf, forSize: .regular)
+            self.yelpStars.image = UIImage(named: "regular_3_half")
+            break
+        case 4:
+            self.yelpStars.image = UIImage.yelpStars(numberOfStars: CDYelpStars.four, forSize: .regular)
+            self.yelpStars.image = UIImage(named: "regular_4")
+            break
+        case 4.5:
+            self.yelpStars.image = UIImage.yelpStars(numberOfStars: CDYelpStars.fourHalf, forSize: .regular)
+            self.yelpStars.image = UIImage(named: "regular_4_half")
+            break
+        case 5:
+            self.yelpStars.image = UIImage.yelpStars(numberOfStars: CDYelpStars.five, forSize: .regular)
+            self.yelpStars.image = UIImage(named: "regular_5")
             break
         default:
             self.yelpStars.image = UIImage.yelpStars(numberOfStars: CDYelpStars.zero, forSize: .regular)
+            self.yelpStars.image = UIImage(named: "regular_0")
         }
     }
     
@@ -135,6 +173,7 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         UserDefaults.standard.set(self.favorites, forKey: "favorites")
         UserDefaults.standard.set(self.favoriteLats, forKey: "favoriteLats")
         UserDefaults.standard.set(self.favoriteLongs, forKey: "favoriteLongs")
+        print(favorites)
     }
     
     @IBAction func goToTaco(_ sender: Any) {

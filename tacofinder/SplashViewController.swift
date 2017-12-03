@@ -32,7 +32,7 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
         noLocationPopUp.isHidden = true
         introAnimation()
         checkForCity()
-
+        
     }
 
     override func didReceiveMemoryWarning() {
@@ -77,6 +77,7 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
                 self.showNoLocationPopUp()
             case .authorizedAlways, .authorizedWhenInUse:
                 print("Location access")
+                noLocationPopUp.isHidden = true
             }
             
         }

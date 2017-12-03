@@ -9,6 +9,7 @@
 import UIKit
 import Alamofire
 import SwiftSoup
+import CoreLocation
 
 class LAGuideViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
@@ -17,6 +18,8 @@ class LAGuideViewController: UIViewController, UITableViewDelegate, UITableViewD
     var top50Opens = [String]()
     var top50Dictionary = [[String: String]]()
     var favorites = [String]()
+    var favoriteLats = [CLLocationDegrees]()
+    var favoriteLongs = [CLLocationDegrees]()
     
 
     override func viewDidLoad() {
@@ -52,12 +55,16 @@ class LAGuideViewController: UIViewController, UITableViewDelegate, UITableViewD
             let recs: Elements = try doc.getElementsByClass("s11")
             let layout: Elements = try doc.getElementsByClass("s12")
             let address: Elements = try doc.getElementsByClass("s6")
+            let lats: Elements = try doc.getElementsByClass("s14")
+            let longs: Elements = try doc.getElementsByClass("s15")
             let namesArray = try names.text().split(separator: "X")
             let opensArray = try opens.text().split(separator: " ")
             let hoodArray = try hoods.text().split(separator: "X")
             let recsArray = try recs.text().split(separator: "X")
             let layoutArray = try layout.text().split(separator: " ")
             let addressArray = try address.text().split(separator: "X")
+            let latsArray = try lats.text().split(separator: " ")
+            let longsArray = try longs.text().split(separator: " ")
             
             for i in 0..<namesArray.count {
                 var business = [String: String]()
@@ -67,6 +74,8 @@ class LAGuideViewController: UIViewController, UITableViewDelegate, UITableViewD
                 business["rec"] = String(recsArray[i].trimmingCharacters(in: .whitespaces))
                 business["layout"] = String(layoutArray[i])
                 business["address"] = String(addressArray[i].trimmingCharacters(in: .whitespaces))
+                business["lat"] = String(latsArray[i])
+                business["long"] = String(longsArray[i])
                 
                 top50Dictionary.append(business)
             }
@@ -84,11 +93,32 @@ class LAGuideViewController: UIViewController, UITableViewDelegate, UITableViewD
     func fetchFavorites() {
         if UserDefaults.standard.object(forKey: "favorites") != nil {
             self.favorites = UserDefaults.standard.object(forKey: "favorites") as! [String]
+            self.favoriteLats = UserDefaults.standard.object(forKey: "favoriteLats") as! [CLLocationDegrees]
+            self.favoriteLongs = UserDefaults.standard.object(forKey: "favoriteLongs") as! [CLLocationDegrees]
         }
     }
     
+    @objc func addToFavorites(sender: UIButton) {
+        if favorites.contains(top50Dictionary[sender.tag]["name"]!) {
+            let index = favorites.index(of: top50Dictionary[sender.tag]["name"]!)
+            favorites.remove(at: index!)
+            favoriteLats.remove(at: index!)
+            favoriteLongs.remove(at: index!)
+            sender.setImage(UIImage(named: "heart-outline-plus"), for: .normal)
+        } else {
+            favorites.append(top50Dictionary[sender.tag]["name"]!)
+            favoriteLats.append(Double(top50Dictionary[sender.tag]["lat"]!)!)
+            favoriteLongs.append(Double(top50Dictionary[sender.tag]["long"]!)!)
+            sender.setImage(UIImage(named: "heart-outline"), for: .normal)
+        }
+        updateUserDefaults()
+    }
+    
     func updateUserDefaults() {
-        
+        UserDefaults.standard.set(favorites, forKey: "favorites")
+        UserDefaults.standard.set(favoriteLats, forKey: "favoriteLats")
+        UserDefaults.standard.set(favoriteLongs, forKey: "favoriteLongs")
+        print(favorites)
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -112,6 +142,10 @@ class LAGuideViewController: UIViewController, UITableViewDelegate, UITableViewD
         cell.address.isUserInteractionEnabled = true
         cell.address.tag = indexPath.row
         cell.address.addTarget(self, action: #selector(hoodToAddress), for: .touchUpInside)
+        
+        cell.favoritesIcon.isUserInteractionEnabled = true
+        cell.favoritesIcon.tag = indexPath.row
+        cell.favoritesIcon.addTarget(self, action: #selector(addToFavorites), for: .touchUpInside)
 
         cell.openStatus.layer.cornerRadius = 5
         cell.address.layer.cornerRadius = 5

@@ -269,6 +269,19 @@
                                     <outlet property="delegate" destination="cQW-GC-V8l" id="LAM-yJ-OK2"/>
                                 </connections>
                             </tableView>
+                            <navigationBar contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Hc0-wn-BdY">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                <items>
+                                    <navigationItem title="The 50 Best Tacos in L.A." id="2MR-fL-V3P">
+                                        <barButtonItem key="leftBarButtonItem" title="Back" id="6Cw-Wk-qGn">
+                                            <connections>
+                                                <segue destination="BYZ-38-t0r" kind="show" id="AMg-8X-B1e"/>
+                                            </connections>
+                                        </barButtonItem>
+                                    </navigationItem>
+                                </items>
+                            </navigationBar>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <viewLayoutGuide key="safeArea" id="2us-4E-yWI"/>
@@ -298,16 +311,18 @@
                                     <outlet property="delegate" destination="3kh-Y3-Id0" id="AzD-NI-nwQ"/>
                                 </connections>
                             </mapView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Taqueria Ollman" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DZu-Ll-yYJ">
-                                <rect key="frame" x="8" y="208" width="359" height="45"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Taqueria Ollman" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DZu-Ll-yYJ">
+                                <rect key="frame" x="126" y="208" width="123.5" height="45"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="yOS-cE-N1Y">
-                                <rect key="frame" x="67" y="259" width="240" height="46"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="yOS-cE-N1Y">
+                                <rect key="frame" x="102" y="259" width="170" height="46"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="6Vg-pa-O4Q"/>
+                                    <constraint firstAttribute="width" secondItem="yOS-cE-N1Y" secondAttribute="height" multiplier="204:36" id="P6W-cl-uNo"/>
+                                </constraints>
                             </imageView>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Jhx-aR-59g">
                                 <rect key="frame" x="16" y="349" width="88" height="30"/>
@@ -328,9 +343,13 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="heart-outline-plus" translatesAutoresizingMaskIntoConstraints="NO" id="U3u-LJ-naO">
-                                <rect key="frame" x="324" y="210" width="43" height="41"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" image="heart-outline-plus" translatesAutoresizingMaskIntoConstraints="NO" id="U3u-LJ-naO">
+                                <rect key="frame" x="325" y="210" width="40" height="41"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="40" id="Jsy-Gp-ZRe"/>
+                                    <constraint firstAttribute="width" constant="40" id="ngC-sm-ixP"/>
+                                    <constraint firstAttribute="width" secondItem="U3u-LJ-naO" secondAttribute="height" multiplier="1:1" id="oxD-GX-ZJc"/>
+                                </constraints>
                             </imageView>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="PLb-Y9-FhG">
                                 <rect key="frame" x="155" y="559" width="65" height="58"/>
@@ -373,8 +392,12 @@
                         <color key="backgroundColor" red="1" green="0.80428272485733032" blue="0.36377298831939697" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="BvK-ET-9X8" firstAttribute="top" secondItem="aCa-gG-HtX" secondAttribute="top" id="6wb-Vu-Cuf"/>
+                            <constraint firstAttribute="trailing" secondItem="U3u-LJ-naO" secondAttribute="trailing" constant="10" id="ev8-by-gmB"/>
                             <constraint firstItem="BvK-ET-9X8" firstAttribute="trailing" secondItem="Kud-Vn-He8" secondAttribute="trailing" id="f9w-rL-TLG"/>
                             <constraint firstItem="BvK-ET-9X8" firstAttribute="leading" secondItem="Kud-Vn-He8" secondAttribute="leading" id="izn-Tj-bgg"/>
+                            <constraint firstItem="yOS-cE-N1Y" firstAttribute="centerX" secondItem="aCa-gG-HtX" secondAttribute="centerX" id="jdw-wa-aPq"/>
+                            <constraint firstItem="DZu-Ll-yYJ" firstAttribute="centerX" secondItem="aCa-gG-HtX" secondAttribute="centerX" id="wqT-UW-RXT"/>
+                            <constraint firstItem="yOS-cE-N1Y" firstAttribute="top" secondItem="DZu-Ll-yYJ" secondAttribute="bottom" constant="6" id="ymR-oz-pFU"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="Kud-Vn-He8"/>
                     </view>
