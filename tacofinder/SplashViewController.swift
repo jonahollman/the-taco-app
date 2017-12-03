@@ -150,12 +150,6 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
         checkForLocationPermission()
         searchForTacos()
         
-    /*    UIView.animate(withDuration: 1.1, animations: {
-            self.tacoTop.transform = CGAffineTransform(scaleX: 12, y: 12)
-        }) { (success) in
-            self.performSegue(withIdentifier: "splashToResult", sender: self)
-        } */
-        
     }
     
     func searchForTacos() {

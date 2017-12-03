@@ -29,7 +29,11 @@ class LAGuideViewController: UIViewController, UITableViewDelegate, UITableViewD
         top50Table.delegate = self
         top50Table.dataSource = self
         
-        fetchGuide()
+        if UserDefaults.standard.object(forKey: "laTop50") == nil {
+            fetchGuide()
+        } else {
+            top50Dictionary = UserDefaults.standard.object(forKey: "laTop50") as! [[String : String]]
+        }
         fetchFavorites()
     }
     
@@ -83,6 +87,7 @@ class LAGuideViewController: UIViewController, UITableViewDelegate, UITableViewD
             
             print(top50Dictionary)
             top50Table.reloadData()
+            UserDefaults.standard.set(top50Dictionary, forKey: "laTop50")
         }catch Exception.Error( _, let message){
             print(message)
         }catch{
@@ -151,7 +156,13 @@ class LAGuideViewController: UIViewController, UITableViewDelegate, UITableViewD
         cell.goButton.isUserInteractionEnabled = true
         cell.goButton.tag = indexPath.row
         cell.goButton.addTarget(self, action: #selector(getDirections), for: .touchUpInside)
-
+        
+        cell.goButton.layer.shadowColor = UIColor.blue.withAlphaComponent(0.8).cgColor
+        cell.goButton.layer.shadowOffset = CGSize(width: 0.0, height: 2.0)
+        cell.goButton.layer.shadowOpacity = 1.0
+        cell.goButton.layer.shadowRadius = 0.0
+        cell.goButton.layer.masksToBounds = false
+        
         cell.openStatus.layer.cornerRadius = 5
         cell.address.layer.cornerRadius = 5
         cell.goButton.layer.cornerRadius = 5
@@ -174,10 +185,6 @@ class LAGuideViewController: UIViewController, UITableViewDelegate, UITableViewD
             cell.favoritesIcon.setImage(UIImage(named: "heart-outline"), for: .normal)
         } else {
             cell.favoritesIcon.setImage(UIImage(named: "heart-outline-plus"), for: .normal)
-        }
-        
-        if indexPath.row % 2 == 1 {
-            cell.backgroundColor = UIColor.groupTableViewBackground
         }
         
         return cell

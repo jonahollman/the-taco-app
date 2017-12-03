@@ -22,6 +22,9 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
     @IBOutlet var tacoFavoriteLabel: UILabel!
     @IBOutlet var favoritesIcon: UIImageView!
     @IBOutlet var tacoPhone: UIButton!
+    @IBOutlet var goButton: UIButton!
+    @IBOutlet var favoritesButton: UIButton!
+    @IBOutlet var nextButton: UIButton!
     
     var locationManager = CLLocationManager()
     var tacoResults = [CDYelpBusiness]()
@@ -31,17 +34,27 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
     var favoriteLats = [CLLocationDegrees]()
     var favoriteLongs = [CLLocationDegrees]()
     var isFavorite = false
+    var phoneNumber = String()
+    var top50Dictionary = [[String: String]]()
+    var tacoLink = String()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
         locationManager.delegate = self
         
-        if UserDefaults.standard.object(forKey: "favorites") != nil && UserDefaults.standard.object(forKey: "favoriteLats") != nil && UserDefaults.standard.object(forKey: "favoriteLongs") != nil {
+        if UserDefaults.standard.object(forKey: "favorites") != nil {
             favorites = UserDefaults.standard.object(forKey: "favorites") as! [String]
             favoriteLats = UserDefaults.standard.object(forKey: "favoriteLats") as! [CLLocationDegrees]
             favoriteLongs = UserDefaults.standard.object(forKey: "favoriteLongs") as! [CLLocationDegrees]
         }
+        
+        if UserDefaults.standard.object(forKey: "laTop50") != nil {
+            top50Dictionary = UserDefaults.standard.object(forKey: "laTop50") as! [[String: String]]
+            print("Top 50 Stored")
+        }
+        
+        setupUI()
 
         setupResult()
         
@@ -54,12 +67,22 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         DispatchQueue.main.async {
             self.tacoName.text = result.name
             self.tacoAddress.text = """
-            \(result.location!.addressOne ?? "")
-            \(result.location!.addressTwo ?? "")
-            \(result.location!.addressThree ?? "")
-            """
+                \(result.location!.addressOne ?? "")
+                \(result.location!.addressTwo ?? "")
+                \(result.location!.addressThree ?? "")
+                """
             // self.tacoHours.text = result![0].open![0].end as? String
-            self.tacoPhone.setTitle(result.displayPhone, for: .normal)
+            if result.hours != nil {
+                print(result.hours)
+            }
+            if result.displayPhone != nil {
+                self.tacoPhone.setTitle(result.displayPhone, for: .normal)
+                self.phoneNumber = result.phone!
+                self.tacoPhone.isHidden = false
+            } else {
+                self.tacoPhone.isHidden = true
+            }
+            self.tacoLink = String(describing: result.url)
             self.setupStars(rating: result.rating!)
         }
         self.tacoLocation = result.coordinates
@@ -99,6 +122,45 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
                 self.isFavorite = false
             }
         }
+        for entry in top50Dictionary {
+            if entry["name"] == tacoResults[resultNumber].name {
+                self.tacoFavoriteLabel.isHidden = false
+                self.tacoName.layer.borderColor = UIColor(red: 1, green: 205/255, blue: 93/255, alpha: 1).cgColor
+                self.tacoName.layer.borderWidth = 2
+                print("Isatop50")
+                break
+            } else {
+                self.tacoFavoriteLabel.isHidden = true
+                self.tacoName.layer.borderWidth = 0
+            }
+        }
+    }
+    
+    func setupUI() {
+        goButton.layer.shadowColor = UIColor.blue.withAlphaComponent(0.8).cgColor
+        goButton.layer.shadowOffset = CGSize(width: 0.0, height: 2.0)
+        goButton.layer.shadowOpacity = 1.0
+        goButton.layer.shadowRadius = 0.0
+        goButton.layer.masksToBounds = false
+        goButton.layer.cornerRadius = 5
+        
+        favoritesButton.layer.shadowColor = UIColor(red: 1, green: 111/255, blue: 104/255, alpha: 0.8).cgColor
+        favoritesButton.layer.shadowOffset = CGSize(width: 0.0, height: 2.0)
+        favoritesButton.layer.shadowOpacity = 1.0
+        favoritesButton.layer.shadowRadius = 0.0
+        favoritesButton.layer.masksToBounds = false
+        favoritesButton.layer.cornerRadius = 5
+        
+        nextButton.layer.shadowColor = UIColor(red: 1, green: 205/255, blue: 93/255, alpha: 0.8).cgColor
+        nextButton.layer.shadowOffset = CGSize(width: 0.0, height: 2.0)
+        nextButton.layer.shadowOpacity = 1.0
+        nextButton.layer.shadowRadius = 0.0
+        nextButton.layer.masksToBounds = false
+        nextButton.layer.cornerRadius = 5
+        
+        self.tacoName.layer.cornerRadius = 5
+        self.tacoName.layer.borderWidth = 0
+    
     }
     
     @objc func changeFavoritesStatus() {
@@ -174,6 +236,38 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         UserDefaults.standard.set(self.favoriteLats, forKey: "favoriteLats")
         UserDefaults.standard.set(self.favoriteLongs, forKey: "favoriteLongs")
         print(favorites)
+    }
+    
+    @IBAction func viewOnYelp(_ sender: Any) {
+        UIApplication.shared.open(URL(string: tacoLink)!, options: [:]) { (success) in
+            print("Opened Yelp site: \(self.tacoLink)")
+        }
+    }
+    
+    
+    @IBAction func callTaco(_ sender: Any) {
+        let phoneurl = URL(string: "tel://\(phoneNumber)")
+        print(phoneurl)
+
+        // Are you sure you want to call?
+        
+        let phonealertController = UIAlertController(
+            title: "Call \(tacoResults[resultNumber].name!)?",
+            message: "Are you sure you want to call ?",
+            preferredStyle: .alert)
+        
+        let phonecancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        
+        phonealertController.addAction(phonecancelAction)
+        
+        let callAction = UIAlertAction(title: "Call", style: .default) { (action) in
+            UIApplication.shared.open(phoneurl!, completionHandler: { (true) in
+            })
+        }
+        
+        phonealertController.addAction(callAction)
+        
+        self.present(phonealertController, animated: true, completion: nil)
     }
     
     @IBAction func goToTaco(_ sender: Any) {
