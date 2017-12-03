@@ -9,6 +9,7 @@
 import UIKit
 import CoreLocation
 import CDYelpFusionKit
+import MapKit
 
 class FavoritesViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, CLLocationManagerDelegate {
 
@@ -68,6 +69,22 @@ class FavoritesViewController: UIViewController, UITableViewDataSource, UITableV
             
             favoritesTable.reloadData()
         }
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let coordinate = CLLocationCoordinate2DMake(favoriteLats[indexPath.row], favoriteLongs[indexPath.row])
+        
+        let placemark:MKPlacemark = MKPlacemark(coordinate: coordinate, addressDictionary: nil)
+        
+        let mapItem:MKMapItem = MKMapItem(placemark: placemark)
+        
+        mapItem.name = "\(favorites[indexPath.row])"
+        
+        let launchOptions:NSDictionary = NSDictionary(object: MKLaunchOptionsDirectionsModeWalking, forKey: MKLaunchOptionsDirectionsModeKey as NSCopying)
+        
+        let currentLocationMapItem:MKMapItem = MKMapItem.forCurrentLocation()
+        
+        MKMapItem.openMaps(with: [currentLocationMapItem, mapItem], launchOptions: launchOptions as? [String : AnyObject])
     }
     
     func updateUserDefaults() {

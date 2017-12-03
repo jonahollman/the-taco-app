@@ -127,6 +127,17 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
     }
     
     @IBAction func goToTaco(_ sender: Any) {
+        
+        let coordinate = CLLocationCoordinate2DMake((tacoLocation?.latitude)!, (tacoLocation?.longitude)!)
+        let placemark:MKPlacemark = MKPlacemark(coordinate: coordinate, addressDictionary: nil)
+        let mapItem:MKMapItem = MKMapItem(placemark: placemark)
+        mapItem.name = "\(self.tacoName)"
+        
+        let launchOptions:NSDictionary = NSDictionary(object: MKLaunchOptionsDirectionsModeWalking, forKey: MKLaunchOptionsDirectionsModeKey as NSCopying)
+        
+        let currentLocationMapItem:MKMapItem = MKMapItem.forCurrentLocation()
+        
+        MKMapItem.openMaps(with: [currentLocationMapItem, mapItem], launchOptions: launchOptions as? [String : AnyObject])
     }
     
     @IBAction func nextResult(_ sender: Any) {
