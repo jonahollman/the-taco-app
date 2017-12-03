@@ -65,15 +65,6 @@ class LAGuideViewController: UIViewController, UITableViewDelegate, UITableViewD
             let layoutArray = try layout.text().split(separator: " ")
             let addressArray = try address.text().split(separator: "X")
             
-         /*   for name in namesArray {
-                let trimmed = name.trimmingCharacters(in: .whitespaces)
-                top50Names.append(String(trimmed))
-            }
-            
-            for open in opensArray {
-                top50Opens.append(String(open))
-            } */
-            
             for i in 0..<namesArray.count {
                 var business = [String: String]()
                 business["name"] = String(namesArray[i].trimmingCharacters(in: .whitespaces))
@@ -113,9 +104,15 @@ class LAGuideViewController: UIViewController, UITableViewDelegate, UITableViewD
         cell.name.text = top50Dictionary[indexPath.row]["name"]
         cell.openStatus.text = top50Dictionary[indexPath.row]["open"]
         cell.address.text = top50Dictionary[indexPath.row]["hood"]
-        cell.recommended.text = "When we go, we order \(top50Dictionary[indexPath.row]["rec"] ?? "")"
+        cell.recommended.text = "When we go, we order the \(top50Dictionary[indexPath.row]["rec"] ?? "")"
         
+        let tap = UIGestureRecognizer(target: self, action: #selector(hoodToAddress))
+        cell.address.isUserInteractionEnabled = true
+        cell.address.addGestureRecognizer(tap)
+        cell.address.tag = indexPath.row
+
         cell.openStatus.layer.cornerRadius = 5
+        cell.address.layer.cornerRadius = 5
         
         if cell.openStatus.text == "Open" {
             cell.openStatus.backgroundColor = UIColor.green
@@ -136,6 +133,11 @@ class LAGuideViewController: UIViewController, UITableViewDelegate, UITableViewD
         }
         
         return cell
+    }
+    
+    @objc func hoodToAddress(sender: UILabel) {
+        print("tapped")
+        print(top50Dictionary[sender.tag]["address"])
     }
     
 
