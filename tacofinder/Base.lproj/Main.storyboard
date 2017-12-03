@@ -49,8 +49,8 @@
                                     <constraint firstAttribute="height" constant="90" id="NZc-od-OC7"/>
                                 </constraints>
                             </imageView>
-                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="o7q-xR-9bO">
-                                <rect key="frame" x="56" y="391" width="262" height="82"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="wordWrap" translatesAutoresizingMaskIntoConstraints="NO" id="o7q-xR-9bO">
+                                <rect key="frame" x="30" y="391" width="315" height="36"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                 <state key="normal" title="See the 50 Best Tacos in L.A."/>
                                 <connections>
@@ -66,7 +66,7 @@
                                             <constraint firstAttribute="height" constant="96" id="thG-lh-yeM"/>
                                         </constraints>
                                     </imageView>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Where are you? Enable location services in the settings app to help us find you some tacos!" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="omG-rb-FXP">
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Where are you? Enable location services in your settings to help us find you some tacos!" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="omG-rb-FXP">
                                         <rect key="frame" x="0.0" y="112" width="239" height="119"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <nil key="textColor"/>
@@ -115,10 +115,11 @@
                         <constraints>
                             <constraint firstItem="eMG-KH-sXp" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="3GF-RQ-s4b"/>
                             <constraint firstItem="AWb-dm-oEc" firstAttribute="top" secondItem="1j3-ar-8jd" secondAttribute="bottom" constant="5" id="ESX-TX-fBp"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="o7q-xR-9bO" secondAttribute="trailing" constant="30" id="Nq5-Wh-Pti"/>
                             <constraint firstItem="eMG-KH-sXp" firstAttribute="top" secondItem="AWb-dm-oEc" secondAttribute="bottom" constant="10" id="OpK-zv-wP8"/>
                             <constraint firstItem="o7q-xR-9bO" firstAttribute="top" secondItem="AWb-dm-oEc" secondAttribute="bottom" constant="100" id="R5d-pQ-gXe"/>
                             <constraint firstItem="0d9-0I-8Cm" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="bvm-tm-Vgp"/>
-                            <constraint firstItem="o7q-xR-9bO" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="cyC-Pa-HWI"/>
+                            <constraint firstItem="o7q-xR-9bO" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="30" id="fxJ-eB-5iC"/>
                             <constraint firstItem="eMG-KH-sXp" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="gvS-es-X7U"/>
                             <constraint firstItem="1j3-ar-8jd" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="izt-63-G7i"/>
                             <constraint firstItem="AWb-dm-oEc" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="xbZ-t9-qIR"/>

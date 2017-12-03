@@ -32,6 +32,7 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
         noLocationPopUp.isHidden = true
         introAnimation()
         checkForCity()
+        setupUI()
         
     }
     
@@ -85,6 +86,12 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
             
         }
         
+    }
+    
+    func setupUI() {
+        self.losAngelesGuideButton.layer.cornerRadius = self.losAngelesGuideButton.layer.frame.height / 2
+        self.losAngelesGuideButton.layer.borderWidth = 2
+        self.losAngelesGuideButton.layer.borderColor = UIColor.blue.cgColor
     }
     
     func checkForCity() {
