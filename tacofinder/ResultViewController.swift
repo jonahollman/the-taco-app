@@ -131,7 +131,7 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         let coordinate = CLLocationCoordinate2DMake((tacoLocation?.latitude)!, (tacoLocation?.longitude)!)
         let placemark:MKPlacemark = MKPlacemark(coordinate: coordinate, addressDictionary: nil)
         let mapItem:MKMapItem = MKMapItem(placemark: placemark)
-        mapItem.name = "\(self.tacoName)"
+        mapItem.name = "\(self.tacoName.text!)"
         
         let launchOptions:NSDictionary = NSDictionary(object: MKLaunchOptionsDirectionsModeWalking, forKey: MKLaunchOptionsDirectionsModeKey as NSCopying)
         
