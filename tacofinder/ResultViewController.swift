@@ -19,7 +19,6 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
     @IBOutlet var yelpLink: UIButton!
     @IBOutlet var tacoAddress: UILabel!
     @IBOutlet var tacoHours: UILabel!
-    @IBOutlet var tacoFavoriteLabel: UILabel!
     @IBOutlet var tacoFavoriteStar: UIImageView!
     @IBOutlet var favoritesIcon: UIImageView!
     @IBOutlet var tacoPhone: UIButton!
@@ -29,6 +28,7 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
     @IBOutlet var homeButton: UIButton!
     
     var locationManager = CLLocationManager()
+    let appDelegate = UIApplication.shared.delegate as! AppDelegate
     var tacoResults = [CDYelpBusiness]()
     var tacoLocation: CDYelpCoordinates?
     var resultNumber = 0
@@ -78,6 +78,7 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
             }
             self.tacoLink = String(describing: result.url)
             self.setupStars(rating: result.rating!)
+            self.setupHours(id: result.id!, day: self.getDay())
         }
         self.tacoLocation = result.coordinates
         setupMap(location: result.coordinates!)
@@ -116,16 +117,13 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
                 self.isFavorite = false
             }
         }
-        self.tacoFavoriteLabel.isHidden = true
         self.tacoFavoriteStar.isHidden = true
         for entry in top50Dictionary {
             if entry["name"] == tacoResults[resultNumber].name {
-                self.tacoFavoriteLabel.isHidden = false
                 self.tacoFavoriteStar.isHidden = false
                 print("Isatop50")
                 break
             } else {
-                self.tacoFavoriteLabel.isHidden = true
                 self.tacoFavoriteStar.isHidden = true
             }
         }
@@ -160,6 +158,20 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         homeButton.layer.masksToBounds = false
         homeButton.layer.cornerRadius = 5
         
+    }
+    
+    func getDay() -> Int {
+        let todayDate = Date()
+        let myCalendar = Calendar(identifier: .gregorian)
+        let myComponents = myCalendar.dateComponents([Calendar.Component.weekday], from: todayDate)
+        let weekDay = myComponents.weekday!
+        print(weekDay)
+        switch weekDay {
+        case 1:
+            return 6
+        default:
+            return weekDay - 2
+        }
     }
     
     @objc func changeFavoritesStatus() {
@@ -230,6 +242,18 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         }
     }
     
+    func setupHours(id: String, day: Int) {
+        appDelegate.apiClient.fetchBusiness(forId: id, locale: nil) { (business) in
+            if let business = business {
+                if business.hours!.count > 0 {
+                    let todayClose = business.hours![0].open![day].end
+                    
+                    self.tacoHours.text = "Open today until \(todayClose!)"
+                }
+            }
+        }
+    }
+    
     func updateUserDefaults() {
         UserDefaults.standard.set(self.favorites, forKey: "favorites")
         UserDefaults.standard.set(self.favoriteLats, forKey: "favoriteLats")
@@ -246,7 +270,7 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
     
     @IBAction func callTaco(_ sender: Any) {
         let phoneurl = URL(string: "tel://\(phoneNumber)")
-        print(phoneurl)
+        print(phoneurl!)
 
         // Are you sure you want to call?
         

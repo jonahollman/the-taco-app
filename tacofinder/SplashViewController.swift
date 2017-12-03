@@ -26,6 +26,7 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
     var token = UserDefaults.standard.string(forKey: "token")
     var latitude = CLLocationDegrees()
     var longitude = CLLocationDegrees()
+    var troubleConnecting = false
     
     var tacoResults = [CDYelpBusiness]()
     
@@ -165,9 +166,17 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
 
     @IBAction func tacosTapped(_ sender: Any) {
         
-        checkForLocationPermission()
-        
-        searchForTacos()
+        if CLLocationManager.locationServicesEnabled() {
+            switch CLLocationManager.authorizationStatus() {
+            case .notDetermined, .restricted, .denied:
+                self.showNoLocationPopUp()
+            case .authorizedAlways, .authorizedWhenInUse:
+                print("Location access")
+                self.dismissNoLocationPopUp()
+                searchForTacos()
+            }
+            
+        }
         
     }
     
@@ -262,7 +271,14 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
     @IBAction func goToLAGuide(_ sender: Any) {
         let laGuide = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "laGuide")
         
-        self.present(laGuide, animated: true, completion: nil)
+        if UserDefaults.standard.object(forKey: "laTop50") == nil {
+            let errorAlert = UIAlertController(title: "Uh oh", message: "We're having trouble finding you tacos. Check your internet connection and try again.", preferredStyle: .alert)
+            let okAction = UIAlertAction(title: "Ok", style: .cancel, handler: nil)
+            errorAlert.addAction(okAction)
+            self.present(errorAlert, animated: true, completion: nil)
+        } else {
+            self.present(laGuide, animated: true, completion: nil)
+        }
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
