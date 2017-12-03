@@ -124,7 +124,6 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         UserDefaults.standard.set(self.favorites, forKey: "favorites")
         UserDefaults.standard.set(self.favoriteLats, forKey: "favoriteLats")
         UserDefaults.standard.set(self.favoriteLongs, forKey: "favoriteLongs")
-
     }
     
     @IBAction func goToTaco(_ sender: Any) {
@@ -138,7 +137,9 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
 
     
     @IBAction func goToFavorites(_ sender: Any) {
-        let favorites = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "favorites")
+        let favorites = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "favorites") as! FavoritesViewController
+        favorites.resultNumber = self.resultNumber
+        favorites.tacoResults = self.tacoResults
         
         self.present(favorites, animated: true, completion: nil)
     }
