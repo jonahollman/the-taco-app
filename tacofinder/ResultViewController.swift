@@ -158,6 +158,11 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         homeButton.layer.masksToBounds = false
         homeButton.layer.cornerRadius = 5
         
+        self.tacoHours.layer.cornerRadius = self.tacoHours.layer.frame.height / 2
+        self.tacoHours.layer.borderColor = UIColor.green.cgColor
+        self.tacoHours.layer.borderWidth = 2
+        self.tacoHours.sizeToFit()
+        
     }
     
     func getDay() -> Int {
@@ -246,9 +251,21 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         appDelegate.apiClient.fetchBusiness(forId: id, locale: nil) { (business) in
             if let business = business {
                 if business.hours!.count > 0 {
-                    let todayClose = business.hours![0].open![day].end
-                    
-                    self.tacoHours.text = "Open today until \(todayClose!)"
+                    var todayClose = business.hours![0].open![day].end
+                    var todayString = String()
+                    if (todayClose?.numberValue!)! > 1200 {
+                        todayString = String(Int((todayClose?.numberValue!)! - 1200)) + " PM"
+                        todayString.insert(":", at: (todayClose?.index((todayClose?.endIndex)!, offsetBy: -3))!)
+                    } else {
+                        todayString = todayClose! + " AM"
+                        todayString.insert(":", at: (todayClose?.index((todayClose?.endIndex)!, offsetBy: -2))!)
+                    }
+                    if todayString[todayString.startIndex] == "0" {
+                        todayString.remove(at: todayString.startIndex)
+                    }
+                    self.tacoHours.text = "Open until \(todayString)     "
+                } else {
+                    self.tacoHours.isHidden = true
                 }
             }
         }
@@ -333,4 +350,14 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
     }
     
 
+}
+
+extension String {
+    var numberValue:Int? {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        let int = formatter.number(from: self)! as! Int
+        return int
+        
+    }
 }
