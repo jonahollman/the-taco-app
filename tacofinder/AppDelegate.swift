@@ -31,9 +31,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         self.apiClient = CDYelpAPIClient(clientId: "wf8D2zMWtbINKMUvFcqZVg",
                                             clientSecret: "6QkPgztAkJ0vej4XEDcPLgJZ7kdoC1AKXEvJHy0wvM5MFyrkd3o3ewSTtVE07VPE")
         
-        if UserDefaults.standard.string(forKey: "token") == nil {
-           // requestYelpToken()
-        }
         
         return true
     }
@@ -61,45 +58,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         // Saves changes in the application's managed object context before the application terminates.
         self.saveContext()
     }
-    
- /*   func requestYelpToken() {
-        
-        let url = URL(string: "https://api.yelp.com/oauth2/token")!
-        var request = URLRequest(url: url)
-        request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-        request.httpMethod = "POST"
-        let postString = "grant_type=client_credentials&client_id=\(yelpID)&client_secret=\(clientSecret)"
-        request.httpBody = postString.data(using: .utf8)
-        
-        let task = URLSession.shared.dataTask(with: request) { data, response, error in
-            guard let data = data, error == nil else {                                                 // check for fundamental networking error
-                print("error=\(String(describing: error))")
-                return
-            }
-            
-            if let httpStatus = response as? HTTPURLResponse, httpStatus.statusCode != 200 {           // check for http errors
-                print("statusCode should be 200, but is \(httpStatus.statusCode)")
-                print("response = \(String(describing: response))")
-            }
-            
-            do {
-                if let json = try JSONSerialization.jsonObject(with: data, options: .mutableContainers) as? [String: Any] {
-                    print(json)
-                    self.storeToken(token: json["access_token"] as! String)
-                }
-            } catch let error {
-                print(error.localizedDescription)
-            }
-            
-        }
-        task.resume()
-        
-    }
-    
-    func storeToken(token: String) {
-        UserDefaults.standard.set(token, forKey: "token")
-    } */
-    
     
     // MARK: - Core Data stack
 

@@ -52,6 +52,7 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
         UIView.animate(withDuration: 2.1, animations: {
             self.tacoButtonOutlet.alpha = 1
         }, completion: { (true) in
+            self.checkForLocationPermission()
         })
         
         UIView.animate(withDuration: 1.1, delay: 0.5, usingSpringWithDamping: 0.5, initialSpringVelocity: 3.1, options: UIViewAnimationOptions.allowUserInteraction, animations: {
@@ -62,9 +63,6 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
         UIView.animate(withDuration: 1.3, delay: 0.7, usingSpringWithDamping: 0.35, initialSpringVelocity: 3.2, options: UIViewAnimationOptions.allowUserInteraction, animations: {
             self.tacoTop.transform = CGAffineTransform.identity
         }) { (true) in
-            
-            self.checkForLocationPermission()
-            
         }
         
     }
@@ -77,7 +75,8 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
                 self.showNoLocationPopUp()
             case .authorizedAlways, .authorizedWhenInUse:
                 print("Location access")
-                noLocationPopUp.isHidden = true
+                self.dismissNoLocationPopUp()
+                checkForCity()
             }
             
         }
@@ -87,6 +86,7 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
     func checkForCity() {
         if CLLocationManager.locationServicesEnabled() {
             if CLLocationManager.authorizationStatus() == .authorizedWhenInUse {
+                locationManager.startUpdatingLocation()
                 self.latitude = (locationManager.location?.coordinate.latitude)!
                 self.longitude = (locationManager.location?.coordinate.longitude)!
                 let currentCoordinates = CLLocation(latitude: latitude, longitude: longitude)
@@ -148,9 +148,15 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
     @IBAction func tacosTapped(_ sender: Any) {
         
         checkForLocationPermission()
+        
         searchForTacos()
         
     }
+    
+    @IBAction func closePopUp(_ sender: Any) {
+        self.dismissNoLocationPopUp()
+    }
+    
     
     func searchForTacos() {
         

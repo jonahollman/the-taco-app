@@ -49,10 +49,10 @@
                                     <constraint firstAttribute="height" constant="90" id="NZc-od-OC7"/>
                                 </constraints>
                             </imageView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="o7q-xR-9bO">
-                                <rect key="frame" x="56" y="391" width="262" height="36"/>
+                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="o7q-xR-9bO">
+                                <rect key="frame" x="56" y="391" width="262" height="82"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="20"/>
-                                <state key="normal" title="Check out the L.A. Taco Guide"/>
+                                <state key="normal" title="See the 50 Best Tacos in L.A."/>
                                 <connections>
                                     <action selector="goToLAGuide:" destination="BYZ-38-t0r" eventType="touchUpInside" id="GR1-7H-Eby"/>
                                 </connections>
@@ -79,14 +79,27 @@
                                             <action selector="goToSettings:" destination="BYZ-38-t0r" eventType="touchUpInside" id="7OD-NN-0c5"/>
                                         </connections>
                                     </button>
+                                    <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BcA-LZ-Y1Q">
+                                        <rect key="frame" x="204" y="10" width="25" height="25"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="25" id="u6V-g6-Gyi"/>
+                                            <constraint firstAttribute="height" constant="25" id="uzu-Ad-hOo"/>
+                                        </constraints>
+                                        <state key="normal" title="Button" image="close"/>
+                                        <connections>
+                                            <action selector="closePopUp:" destination="BYZ-38-t0r" eventType="touchUpInside" id="9Rh-QS-86n"/>
+                                        </connections>
+                                    </button>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstItem="GrD-N8-0p1" firstAttribute="leading" secondItem="0d9-0I-8Cm" secondAttribute="leading" id="3LN-9z-3we"/>
                                     <constraint firstAttribute="bottom" secondItem="omG-rb-FXP" secondAttribute="bottom" constant="48" id="AXg-us-i6P"/>
+                                    <constraint firstItem="BcA-LZ-Y1Q" firstAttribute="top" secondItem="0d9-0I-8Cm" secondAttribute="top" constant="10" id="F7M-l7-cnV"/>
                                     <constraint firstAttribute="bottom" secondItem="Sm0-mg-CKw" secondAttribute="bottom" constant="10" id="Gvx-ia-6uL"/>
                                     <constraint firstItem="Sm0-mg-CKw" firstAttribute="leading" secondItem="0d9-0I-8Cm" secondAttribute="leading" constant="60" id="HLM-jj-Y8Z"/>
                                     <constraint firstItem="omG-rb-FXP" firstAttribute="leading" secondItem="0d9-0I-8Cm" secondAttribute="leading" id="Q1O-oJ-oGM"/>
+                                    <constraint firstAttribute="trailing" secondItem="BcA-LZ-Y1Q" secondAttribute="trailing" constant="10" id="SQV-61-9hQ"/>
                                     <constraint firstItem="omG-rb-FXP" firstAttribute="top" secondItem="GrD-N8-0p1" secondAttribute="bottom" constant="8" id="cT5-AN-g43"/>
                                     <constraint firstAttribute="trailing" secondItem="Sm0-mg-CKw" secondAttribute="trailing" constant="60" id="fM8-Ml-XU3"/>
                                     <constraint firstAttribute="trailing" secondItem="omG-rb-FXP" secondAttribute="trailing" id="fQf-HK-dP9"/>
@@ -162,7 +175,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="F0k-pP-Kag">
-                                                    <rect key="frame" x="0.0" y="0.0" width="245" height="38"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="252" height="38"/>
                                                     <subviews>
                                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="sfN-Dz-unp">
                                                             <rect key="frame" x="8" y="3" width="32" height="32"/>
@@ -184,7 +197,7 @@
                                                             </constraints>
                                                         </view>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Taco Name" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WpI-sp-zqD">
-                                                            <rect key="frame" x="45" y="8" width="195" height="21"/>
+                                                            <rect key="frame" x="45" y="8" width="202" height="21"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                             <nil key="textColor"/>
                                                             <nil key="highlightedColor"/>
@@ -210,11 +223,11 @@
                                                         <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                     </state>
                                                 </button>
-                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="kQM-5j-h81">
-                                                    <rect key="frame" x="265" y="2" width="35" height="35"/>
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="kQM-5j-h81">
+                                                    <rect key="frame" x="262" y="3" width="33" height="33"/>
                                                     <constraints>
-                                                        <constraint firstAttribute="width" constant="35" id="Ecl-Kd-sbh"/>
-                                                        <constraint firstAttribute="height" constant="35" id="N4x-nA-LX1"/>
+                                                        <constraint firstAttribute="width" constant="33" id="Ecl-Kd-sbh"/>
+                                                        <constraint firstAttribute="height" constant="33" id="N4x-nA-LX1"/>
                                                     </constraints>
                                                 </imageView>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="When we go, we order:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dyA-Pl-XDK">
@@ -246,8 +259,8 @@
                                                 <constraint firstItem="F0k-pP-Kag" firstAttribute="top" secondItem="t2r-kb-GD6" secondAttribute="top" id="40L-Lu-56z"/>
                                                 <constraint firstAttribute="trailing" secondItem="2TP-jv-Hgt" secondAttribute="trailing" constant="5" id="62t-4P-M6y"/>
                                                 <constraint firstItem="F0k-pP-Kag" firstAttribute="leading" secondItem="t2r-kb-GD6" secondAttribute="leading" id="ERU-vC-pS4"/>
-                                                <constraint firstItem="2TP-jv-Hgt" firstAttribute="leading" secondItem="kQM-5j-h81" secondAttribute="trailing" constant="30" id="IOw-Ft-Gz8"/>
-                                                <constraint firstItem="kQM-5j-h81" firstAttribute="leading" secondItem="F0k-pP-Kag" secondAttribute="trailing" constant="20" id="UQe-kE-noW"/>
+                                                <constraint firstItem="2TP-jv-Hgt" firstAttribute="leading" secondItem="kQM-5j-h81" secondAttribute="trailing" constant="35" id="IOw-Ft-Gz8"/>
+                                                <constraint firstItem="kQM-5j-h81" firstAttribute="leading" secondItem="F0k-pP-Kag" secondAttribute="trailing" constant="10" id="UQe-kE-noW"/>
                                                 <constraint firstItem="2TP-jv-Hgt" firstAttribute="centerY" secondItem="kQM-5j-h81" secondAttribute="centerY" id="aXz-fC-pQw"/>
                                                 <constraint firstItem="kQM-5j-h81" firstAttribute="centerY" secondItem="F0k-pP-Kag" secondAttribute="centerY" id="zIK-la-nHe"/>
                                             </constraints>
@@ -529,11 +542,12 @@
         <image name="TacoAppSAD" width="839" height="839"/>
         <image name="TacoBottom" width="80" height="80"/>
         <image name="Tacotop" width="347" height="192"/>
+        <image name="close" width="48" height="48"/>
         <image name="heart-outline-plus" width="256" height="256"/>
         <image name="phone" width="40" height="40"/>
         <image name="yelp_logo" width="333" height="213"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="BCm-oZ-a2o"/>
+        <segue reference="Yk9-NW-OUj"/>
     </inferredMetricsTieBreakers>
 </document>

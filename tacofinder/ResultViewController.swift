@@ -111,7 +111,7 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
     }
     
     func checkIfFavorite() {
-        print(favorites)
+        print("Favorites: \(favorites)")
         for favorite in favorites {
             if favorite == tacoResults[resultNumber].name {
                 self.favoritesIcon.image = UIImage(named: "heart-outline")
@@ -122,6 +122,7 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
                 self.isFavorite = false
             }
         }
+        self.tacoFavoriteLabel.isHidden = true
         for entry in top50Dictionary {
             if entry["name"] == tacoResults[resultNumber].name {
                 self.tacoFavoriteLabel.isHidden = false
