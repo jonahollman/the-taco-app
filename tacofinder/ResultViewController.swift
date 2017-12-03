@@ -20,11 +20,13 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
     @IBOutlet var tacoAddress: UILabel!
     @IBOutlet var tacoHours: UILabel!
     @IBOutlet var tacoFavoriteLabel: UILabel!
+    @IBOutlet var tacoFavoriteStar: UIImageView!
     @IBOutlet var favoritesIcon: UIImageView!
     @IBOutlet var tacoPhone: UIButton!
     @IBOutlet var goButton: UIButton!
     @IBOutlet var favoritesButton: UIButton!
     @IBOutlet var nextButton: UIButton!
+    @IBOutlet var homeButton: UIButton!
     
     var locationManager = CLLocationManager()
     var tacoResults = [CDYelpBusiness]()
@@ -66,17 +68,9 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         let result = tacoResults[resultNumber]
         DispatchQueue.main.async {
             self.tacoName.text = result.name
-            self.tacoAddress.text = """
-                \(result.location!.addressOne ?? "")
-                \(result.location!.addressTwo ?? "")
-                \(result.location!.addressThree ?? "")
-                """
-            // self.tacoHours.text = result![0].open![0].end as? String
-            if result.hours != nil {
-                print(result.hours)
-            }
+            self.tacoAddress.text = "\(result.location!.displayAddress![0])"
             if result.displayPhone != nil {
-                self.tacoPhone.setTitle(result.displayPhone, for: .normal)
+          //  self.tacoPhone.setTitle(result.displayPhone, for: .normal)
                 self.phoneNumber = result.phone!
                 self.tacoPhone.isHidden = false
             } else {
@@ -123,16 +117,16 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
             }
         }
         self.tacoFavoriteLabel.isHidden = true
+        self.tacoFavoriteStar.isHidden = true
         for entry in top50Dictionary {
             if entry["name"] == tacoResults[resultNumber].name {
                 self.tacoFavoriteLabel.isHidden = false
-                self.tacoName.layer.borderColor = UIColor(red: 1, green: 205/255, blue: 93/255, alpha: 1).cgColor
-                self.tacoName.layer.borderWidth = 2
+                self.tacoFavoriteStar.isHidden = false
                 print("Isatop50")
                 break
             } else {
                 self.tacoFavoriteLabel.isHidden = true
-                self.tacoName.layer.borderWidth = 0
+                self.tacoFavoriteStar.isHidden = true
             }
         }
     }
@@ -159,9 +153,13 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         nextButton.layer.masksToBounds = false
         nextButton.layer.cornerRadius = 5
         
-        self.tacoName.layer.cornerRadius = 5
-        self.tacoName.layer.borderWidth = 0
-    
+        homeButton.layer.shadowColor = UIColor(red: 156/255, green: 217/255, blue: 167/255, alpha: 0.8).cgColor
+        homeButton.layer.shadowOffset = CGSize(width: 0.0, height: 2.0)
+        homeButton.layer.shadowOpacity = 1.0
+        homeButton.layer.shadowRadius = 0.0
+        homeButton.layer.masksToBounds = false
+        homeButton.layer.cornerRadius = 5
+        
     }
     
     @objc func changeFavoritesStatus() {
@@ -291,6 +289,11 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         setupResult()
     }
 
+    @IBAction func goHome(_ sender: Any) {
+        let home = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "splash") as! SplashViewController
+        
+        self.present(home, animated: true, completion: nil)
+    }
     
     @IBAction func goToFavorites(_ sender: Any) {
         let favorites = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "favorites") as! FavoritesViewController

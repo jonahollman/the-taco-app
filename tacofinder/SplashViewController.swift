@@ -9,6 +9,8 @@
 import UIKit
 import CoreLocation
 import CDYelpFusionKit
+import Alamofire
+import SwiftSoup
 
 class SplashViewController: UIViewController, CLLocationManagerDelegate {
     
@@ -91,7 +93,7 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
     func setupUI() {
         self.losAngelesGuideButton.layer.cornerRadius = self.losAngelesGuideButton.layer.frame.height / 2
         self.losAngelesGuideButton.layer.borderWidth = 2
-        self.losAngelesGuideButton.layer.borderColor = UIColor.blue.cgColor
+        self.losAngelesGuideButton.layer.borderColor = UIColor(red: 1, green: 111/255, blue: 104/255, alpha: 1).cgColor
     }
     
     func checkForCity() {
@@ -104,6 +106,11 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
                 let distanceInMiles = currentCoordinates.distance(from: losAngelesCoordinate) / 1609
                 if distanceInMiles <= 30 {
                     showCityGuide()
+                    if UserDefaults.standard.object(forKey: "laTop50") == nil {
+                        fetchGuide()
+                    } else {
+                        print("Top 50 Stored")
+                    }
                 }
             }
         }
@@ -193,6 +200,64 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
         
     }
     
+    func fetchGuide() {
+        let url = URL(string: "https://docs.google.com/spreadsheets/d/e/2PACX-1vT7AS8-joC6aaPByYJT00uUDQ9ueyQ08bBKOuZSQPCBCe4K-hOLKzgsgcOw5JQELXfGjatmG_mTLrSD/pubhtml?gid=0&single=true")
+        
+        Alamofire.request(url!).responseString { (response) in
+            print("\(response.result.isSuccess)")
+            if let html = response.result.value {
+                self.parseHTML(html: html)
+            }
+        }
+    }
+    
+    func parseHTML(html: String) {
+        
+        var top50Dictionary = [[String: String]]()
+        
+        do{
+            let doc: Document = try SwiftSoup.parse(html)
+            let names: Elements = try doc.getElementsByClass("s5")
+            let opens: Elements = try doc.getElementsByClass("s13")
+            let hoods: Elements = try doc.getElementsByClass("s7")
+            let recs: Elements = try doc.getElementsByClass("s11")
+            let layout: Elements = try doc.getElementsByClass("s12")
+            let address: Elements = try doc.getElementsByClass("s6")
+            let lats: Elements = try doc.getElementsByClass("s14")
+            let longs: Elements = try doc.getElementsByClass("s15")
+            let namesArray = try names.text().split(separator: "X")
+            let opensArray = try opens.text().split(separator: " ")
+            let hoodArray = try hoods.text().split(separator: "X")
+            let recsArray = try recs.text().split(separator: "X")
+            let layoutArray = try layout.text().split(separator: " ")
+            let addressArray = try address.text().split(separator: "X")
+            let latsArray = try lats.text().split(separator: " ")
+            let longsArray = try longs.text().split(separator: " ")
+            
+            for i in 0..<namesArray.count {
+                var business = [String: String]()
+                business["name"] = String(namesArray[i].trimmingCharacters(in: .whitespaces))
+                business["open"] = String(opensArray[i])
+                business["hood"] = String(hoodArray[i].trimmingCharacters(in: .whitespaces))
+                business["rec"] = String(recsArray[i].trimmingCharacters(in: .whitespaces))
+                business["layout"] = String(layoutArray[i])
+                business["address"] = String(addressArray[i].trimmingCharacters(in: .whitespaces))
+                business["lat"] = String(latsArray[i])
+                business["long"] = String(longsArray[i])
+                
+                top50Dictionary.append(business)
+            }
+            
+            print(top50Dictionary)
+            UserDefaults.standard.set(top50Dictionary, forKey: "laTop50")
+        }catch Exception.Error( _, let message){
+            print(message)
+        }catch{
+            print("error")
+        }
+        
+    }
+    
     
     @IBAction func goToLAGuide(_ sender: Any) {
         let laGuide = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "laGuide")
@@ -205,6 +270,10 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
             let vc = segue.destination as! ResultViewController
             vc.tacoResults = self.tacoResults
         }
+    }
+    
+    override var prefersStatusBarHidden: Bool {
+        return true
     }
     
 }
