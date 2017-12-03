@@ -171,7 +171,7 @@
                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="F0k-pP-Kag">
                                                     <rect key="frame" x="0.0" y="0.0" width="180" height="38"/>
                                                     <subviews>
-                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Rank" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="q92-Qn-c8J">
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="q92-Qn-c8J">
                                                             <rect key="frame" x="0.0" y="0.0" width="38" height="38"/>
                                                             <color key="backgroundColor" red="0.87529743020304562" green="0.70805704803843617" blue="0.32228302113655616" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                             <constraints>
@@ -296,7 +296,7 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="U3u-LJ-naO">
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="heart-outline-plus" translatesAutoresizingMaskIntoConstraints="NO" id="U3u-LJ-naO">
                                 <rect key="frame" x="324" y="210" width="43" height="41"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
@@ -315,7 +315,7 @@
                                 <state key="normal" title="619-929-9706"/>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="B9M-TJ-Jq1">
-                                <rect key="frame" x="292" y="578" width="32" height="30"/>
+                                <rect key="frame" x="292" y="578" width="67" height="62"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Next"/>
                                 <connections>
@@ -410,7 +410,11 @@
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                                 <items>
                                     <navigationItem title="Favorites" id="jS8-zg-Ui7">
-                                        <barButtonItem key="leftBarButtonItem" title="Back" id="nhf-48-8SI"/>
+                                        <barButtonItem key="leftBarButtonItem" title="Back" id="nhf-48-8SI">
+                                            <connections>
+                                                <segue destination="3kh-Y3-Id0" kind="show" id="BCm-oZ-a2o"/>
+                                            </connections>
+                                        </barButtonItem>
                                     </navigationItem>
                                 </items>
                             </navigationBar>
@@ -431,5 +435,9 @@
         <image name="TacoAppSAD" width="839" height="839"/>
         <image name="TacoBottom" width="80" height="80"/>
         <image name="Tacotop" width="347" height="192"/>
+        <image name="heart-outline-plus" width="256" height="256"/>
     </resources>
+    <inferredMetricsTieBreakers>
+        <segue reference="BCm-oZ-a2o"/>
+    </inferredMetricsTieBreakers>
 </document>
