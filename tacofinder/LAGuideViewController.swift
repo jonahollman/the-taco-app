@@ -10,6 +10,7 @@ import UIKit
 import Alamofire
 import SwiftSoup
 import CoreLocation
+import MapKit
 
 class LAGuideViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
@@ -146,9 +147,14 @@ class LAGuideViewController: UIViewController, UITableViewDelegate, UITableViewD
         cell.favoritesIcon.isUserInteractionEnabled = true
         cell.favoritesIcon.tag = indexPath.row
         cell.favoritesIcon.addTarget(self, action: #selector(addToFavorites), for: .touchUpInside)
+        
+        cell.goButton.isUserInteractionEnabled = true
+        cell.goButton.tag = indexPath.row
+        cell.goButton.addTarget(self, action: #selector(getDirections), for: .touchUpInside)
 
         cell.openStatus.layer.cornerRadius = 5
         cell.address.layer.cornerRadius = 5
+        cell.goButton.layer.cornerRadius = 5
         
         if cell.openStatus.text == "Open" {
             cell.openStatus.backgroundColor = UIColor.green
@@ -183,6 +189,23 @@ class LAGuideViewController: UIViewController, UITableViewDelegate, UITableViewD
         } else {
             sender.setTitle(top50Dictionary[sender.tag]["address"], for: .normal)
         }
+    }
+    
+    @objc func getDirections(sender: UIButton) {
+        
+        let latitude = Double(top50Dictionary[sender.tag]["lat"]!)!
+        let longitude = Double(top50Dictionary[sender.tag]["long"]!)!
+        
+        let coordinate = CLLocationCoordinate2DMake(latitude, longitude)
+        let placemark:MKPlacemark = MKPlacemark(coordinate: coordinate, addressDictionary: nil)
+        let mapItem:MKMapItem = MKMapItem(placemark: placemark)
+        mapItem.name = "\(top50Dictionary[sender.tag]["name"] ?? "Tacos")"
+        
+        let launchOptions:NSDictionary = NSDictionary(object: MKLaunchOptionsDirectionsModeDriving, forKey: MKLaunchOptionsDirectionsModeKey as NSCopying)
+        
+        let currentLocationMapItem:MKMapItem = MKMapItem.forCurrentLocation()
+        
+        MKMapItem.openMaps(with: [currentLocationMapItem, mapItem], launchOptions: launchOptions as? [String : AnyObject])
     }
     
 
