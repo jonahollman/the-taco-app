@@ -60,6 +60,7 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
             """
             // self.tacoHours.text = result![0].open![0].end as? String
             self.tacoPhone.setTitle(result.displayPhone, for: .normal)
+            self.setupStars(rating: result.rating!)
         }
         self.tacoLocation = result.coordinates
         setupMap(location: result.coordinates!)
@@ -118,6 +119,16 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
             print(favorites)
         }
         updateUserDefaults()
+    }
+    
+    func setupStars(rating: Double) {
+        switch rating {
+        case 0:
+            self.yelpStars.image = UIImage.yelpStars(numberOfStars: CDYelpStars.zero, forSize: .regular)
+            break
+        default:
+            self.yelpStars.image = UIImage.yelpStars(numberOfStars: CDYelpStars.zero, forSize: .regular)
+        }
     }
     
     func updateUserDefaults() {

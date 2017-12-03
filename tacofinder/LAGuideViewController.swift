@@ -56,10 +56,14 @@ class LAGuideViewController: UIViewController, UITableViewDelegate, UITableViewD
             let opens: Elements = try doc.getElementsByClass("s13")
             let hoods: Elements = try doc.getElementsByClass("s7")
             let recs: Elements = try doc.getElementsByClass("s11")
+            let layout: Elements = try doc.getElementsByClass("s12")
+            let address: Elements = try doc.getElementsByClass("s6")
             let namesArray = try names.text().split(separator: "X")
             let opensArray = try opens.text().split(separator: " ")
             let hoodArray = try hoods.text().split(separator: "X")
             let recsArray = try recs.text().split(separator: "X")
+            let layoutArray = try layout.text().split(separator: " ")
+            let addressArray = try address.text().split(separator: "X")
             
          /*   for name in namesArray {
                 let trimmed = name.trimmingCharacters(in: .whitespaces)
@@ -76,6 +80,8 @@ class LAGuideViewController: UIViewController, UITableViewDelegate, UITableViewD
                 business["open"] = String(opensArray[i])
                 business["hood"] = String(hoodArray[i].trimmingCharacters(in: .whitespaces))
                 business["rec"] = String(recsArray[i].trimmingCharacters(in: .whitespaces))
+                business["layout"] = String(layoutArray[i])
+                business["address"] = String(addressArray[i].trimmingCharacters(in: .whitespaces))
                 
                 top50Dictionary.append(business)
             }
@@ -92,7 +98,7 @@ class LAGuideViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.top50Names.count
+        return self.top50Dictionary.count
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -103,7 +109,7 @@ class LAGuideViewController: UIViewController, UITableViewDelegate, UITableViewD
         let cell = top50Table.dequeueReusableCell(withIdentifier: "cell") as! Top50TableViewCell
         
         cell.rank.text = String(indexPath.row + 1)
-        cell.rankContainer.layer.cornerRadius = 20
+        cell.rankContainer.layer.cornerRadius = cell.rankContainer.layer.frame.height / 2
         cell.name.text = top50Dictionary[indexPath.row]["name"]
         cell.openStatus.text = top50Dictionary[indexPath.row]["open"]
         cell.address.text = top50Dictionary[indexPath.row]["hood"]
@@ -115,6 +121,14 @@ class LAGuideViewController: UIViewController, UITableViewDelegate, UITableViewD
             cell.openStatus.backgroundColor = UIColor.green
         } else {
             cell.openStatus.backgroundColor = UIColor.red
+        }
+        
+        if top50Dictionary[indexPath.row]["layout"] == "R" {
+            cell.descriptionImage.image = UIImage(named: "restaurant")
+        } else if top50Dictionary[indexPath.row]["layout"] == "T" {
+            cell.descriptionImage.image = UIImage(named: "truck")
+        } else {
+            cell.descriptionImage.image = UIImage(named: "stand")
         }
         
         if indexPath.row % 2 == 1 {
