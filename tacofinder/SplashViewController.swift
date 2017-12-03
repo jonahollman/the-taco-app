@@ -34,6 +34,10 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
         checkForCity()
         
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        checkForLocationPermission()
+    }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -163,7 +167,20 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
         appDelegate.apiClient.searchBusinesses(byTerm: "tacos", location: nil, latitude: self.latitude , longitude: self.longitude, radius: nil, categories: nil, locale: nil, limit: nil, offset: nil, sortBy: .distance, priceTiers: nil, openNow: true, openAt: nil, attributes: nil) { (response) in
             if let response = response {
                 self.tacoResults = response.businesses!
-                self.performSegue(withIdentifier: "splashToResult", sender: self)
+                if self.tacoResults.count > 0 {
+                    self.performSegue(withIdentifier: "splashToResult", sender: self)
+                } else {
+                    let noResultsAlert = UIAlertController(title: "Uh oh", message: "We can't find any tacos nearby! We highly suggest moving to an area with more deliciousness.", preferredStyle: .alert)
+                    let okAction = UIAlertAction(title: "Ok", style: .cancel, handler: nil)
+                    noResultsAlert.addAction(okAction)
+                    self.present(noResultsAlert, animated: true, completion: nil)
+                }
+            } else {
+                let errorAlert = UIAlertController(title: "Uh oh", message: "We're having trouble finding you tacos. Check your internet connection and try again.", preferredStyle: .alert)
+                let okAction = UIAlertAction(title: "Ok", style: .cancel, handler: nil)
+                errorAlert.addAction(okAction)
+                self.present(errorAlert, animated: true, completion: nil)
+
             }
         }
         

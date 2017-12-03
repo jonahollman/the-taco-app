@@ -343,6 +343,14 @@
                                     <constraint firstAttribute="width" secondItem="yOS-cE-N1Y" secondAttribute="height" multiplier="204:36" id="P6W-cl-uNo"/>
                                 </constraints>
                             </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Jhx-aR-59g">
+                                <rect key="frame" x="144" y="408" width="88" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="View on Yelp"/>
+                                <connections>
+                                    <action selector="viewOnYelp:" destination="3kh-Y3-Id0" eventType="touchUpInside" id="Bfh-RL-Ncs"/>
+                                </connections>
+                            </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Open today: 11am - 10pm" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nVf-8x-owI">
                                 <rect key="frame" x="44" y="468" width="286" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -374,14 +382,6 @@
                                 </state>
                                 <connections>
                                     <action selector="goToTaco:" destination="3kh-Y3-Id0" eventType="touchUpInside" id="19X-ct-wY9"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleAspectFit" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8f1-9M-DvF">
-                                <rect key="frame" x="309" y="458" width="40" height="40"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="619-929-9706" image="phone"/>
-                                <connections>
-                                    <action selector="callTaco:" destination="3kh-Y3-Id0" eventType="touchUpInside" id="T3U-sO-jiN"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="B9M-TJ-Jq1">
@@ -422,12 +422,12 @@
                                     <constraint firstAttribute="height" constant="30" id="coK-E5-2qD"/>
                                 </constraints>
                             </imageView>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Jhx-aR-59g">
-                                <rect key="frame" x="144" y="408" width="88" height="30"/>
+                            <button opaque="NO" contentMode="scaleAspectFit" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8f1-9M-DvF">
+                                <rect key="frame" x="309" y="462" width="32" height="32"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="View on Yelp"/>
+                                <state key="normal" title="619-929-9706" image="phone"/>
                                 <connections>
-                                    <action selector="viewOnYelp:" destination="3kh-Y3-Id0" eventType="touchUpInside" id="Bfh-RL-Ncs"/>
+                                    <action selector="callTaco:" destination="3kh-Y3-Id0" eventType="touchUpInside" id="T3U-sO-jiN"/>
                                 </connections>
                             </button>
                         </subviews>
