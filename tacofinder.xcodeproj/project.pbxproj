@@ -13,6 +13,8 @@
 		2BA6C1231F8AD3A700ED3C13 /* tacofinder.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 2BA6C1211F8AD3A700ED3C13 /* tacofinder.xcdatamodeld */; };
 		2BA6C1251F8AD3A700ED3C13 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2BA6C1241F8AD3A700ED3C13 /* Assets.xcassets */; };
 		2BA6C1281F8AD3A700ED3C13 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2BA6C1261F8AD3A700ED3C13 /* LaunchScreen.storyboard */; };
+		2BAB86121FD4CAE600364251 /* Mixpanel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BAB86111FD4CAE600364251 /* Mixpanel.framework */; };
+		2BAB86131FD4CAE600364251 /* Mixpanel.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2BAB86111FD4CAE600364251 /* Mixpanel.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		2BCDF7061FCE6C2600E87BF4 /* LAGuideViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BCDF7051FCE6C2600E87BF4 /* LAGuideViewController.swift */; };
 		2BCDF7081FCE6D0F00E87BF4 /* Top50TableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BCDF7071FCE6D0F00E87BF4 /* Top50TableViewCell.swift */; };
 		2BD499CA1F929A2000BAB0FF /* ResultViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BD499C91F929A2000BAB0FF /* ResultViewController.swift */; };
@@ -27,6 +29,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				2BAB86131FD4CAE600364251 /* Mixpanel.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -43,6 +46,7 @@
 		2BA6C1241F8AD3A700ED3C13 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2BA6C1271F8AD3A700ED3C13 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		2BA6C1291F8AD3A700ED3C13 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		2BAB86111FD4CAE600364251 /* Mixpanel.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Mixpanel.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2BCDF7051FCE6C2600E87BF4 /* LAGuideViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LAGuideViewController.swift; sourceTree = "<group>"; };
 		2BCDF7071FCE6D0F00E87BF4 /* Top50TableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Top50TableViewCell.swift; sourceTree = "<group>"; };
 		2BD499C91F929A2000BAB0FF /* ResultViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultViewController.swift; sourceTree = "<group>"; };
@@ -56,6 +60,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2BAB86121FD4CAE600364251 /* Mixpanel.framework in Frameworks */,
 				7D4BF72F767C3D7721147DEE /* Pods_tacofinder.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -66,6 +71,7 @@
 		2BA6C10E1F8AD3A700ED3C13 = {
 			isa = PBXGroup;
 			children = (
+				2BAB86111FD4CAE600364251 /* Mixpanel.framework */,
 				2BA6C1191F8AD3A700ED3C13 /* tacofinder */,
 				2BA6C1181F8AD3A700ED3C13 /* Products */,
 				C941FEAD2D59A2D445A9A722 /* Pods */,

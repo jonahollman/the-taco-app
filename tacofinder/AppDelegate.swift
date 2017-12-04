@@ -12,6 +12,7 @@ import CoreLocation
 import Foundation
 import Security
 import CDYelpFusionKit
+import Mixpanel
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate {
@@ -29,6 +30,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         
         self.apiClient = CDYelpAPIClient(clientId: "wf8D2zMWtbINKMUvFcqZVg",
                                             clientSecret: "6QkPgztAkJ0vej4XEDcPLgJZ7kdoC1AKXEvJHy0wvM5MFyrkd3o3ewSTtVE07VPE")
+        
+        Mixpanel.initialize(token: "8a00d2a4b980ba10b9aad0fdd99c92c9")
         
         
         return true
