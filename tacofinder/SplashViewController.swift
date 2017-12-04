@@ -11,6 +11,7 @@ import CoreLocation
 import CDYelpFusionKit
 import Alamofire
 import SwiftSoup
+import Mixpanel
 
 class SplashViewController: UIViewController, CLLocationManagerDelegate {
     
@@ -107,6 +108,7 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
                 let distanceInMiles = currentCoordinates.distance(from: losAngelesCoordinate) / 1609
                 if distanceInMiles <= 30 {
                     showCityGuide()
+                    Mixpanel.mainInstance().track(event: "In City Guide Range", properties: ["City": "Los Angeles"])
                     if UserDefaults.standard.object(forKey: "laTop50") == nil {
                         fetchGuide()
                     } else {
@@ -173,6 +175,7 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
             case .authorizedAlways, .authorizedWhenInUse:
                 print("Location access")
                 self.dismissNoLocationPopUp()
+                Mixpanel.mainInstance().track(event: "Tapped for Tacos")
                 searchForTacos()
             }
             
@@ -276,7 +279,9 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
             let okAction = UIAlertAction(title: "Ok", style: .cancel, handler: nil)
             errorAlert.addAction(okAction)
             self.present(errorAlert, animated: true, completion: nil)
+            self.fetchGuide()
         } else {
+            Mixpanel.mainInstance().track(event: "Visited City Guide", properties: ["City": "Los Angeles"])
             self.present(laGuide, animated: true, completion: nil)
         }
     }

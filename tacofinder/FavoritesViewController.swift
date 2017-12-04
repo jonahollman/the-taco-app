@@ -10,6 +10,7 @@ import UIKit
 import CoreLocation
 import CDYelpFusionKit
 import MapKit
+import Mixpanel
 
 class FavoritesViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, CLLocationManagerDelegate {
 
@@ -87,6 +88,8 @@ class FavoritesViewController: UIViewController, UITableViewDataSource, UITableV
             favoriteLats.remove(at: indexPath.row)
             favoriteLongs.remove(at: indexPath.row)
             
+            Mixpanel.mainInstance().track(event: "Removed from Favorites", properties: ["name": favorites[indexPath.row], "lat": favoriteLats[indexPath.row], "long": favoriteLongs[indexPath.row]])
+            
             updateUserDefaults()
             
             favoritesTable.reloadData()
@@ -105,6 +108,8 @@ class FavoritesViewController: UIViewController, UITableViewDataSource, UITableV
         let launchOptions:NSDictionary = NSDictionary(object: MKLaunchOptionsDirectionsModeWalking, forKey: MKLaunchOptionsDirectionsModeKey as NSCopying)
         
         let currentLocationMapItem:MKMapItem = MKMapItem.forCurrentLocation()
+        
+        Mixpanel.mainInstance().track(event: "Removed from Favorites", properties: ["name": favorites[indexPath.row], "lat": favoriteLats[indexPath.row], "long": favoriteLongs[indexPath.row]])
         
         MKMapItem.openMaps(with: [currentLocationMapItem, mapItem], launchOptions: launchOptions as? [String : AnyObject])
     }

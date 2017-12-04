@@ -10,6 +10,7 @@ import UIKit
 import CDYelpFusionKit
 import MapKit
 import CoreLocation
+import Mixpanel
 
 class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDelegate {
     
@@ -79,6 +80,7 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
             self.tacoLink = String(describing: result.url)
             self.setupStars(rating: result.rating!)
             self.setupHours(id: result.id!, day: self.getDay())
+            Mixpanel.mainInstance().track(event: "Viewed Taco Result", properties: ["name": result.name!, "city": (result.location?.city!)!, "state": (result.location?.state!)!])
         }
         self.tacoLocation = result.coordinates
         setupMap(location: result.coordinates!)
@@ -194,6 +196,7 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
             self.favorites.append(self.tacoName.text!)
             self.favoriteLats.append((self.tacoLocation?.latitude!)!)
             self.favoriteLongs.append((self.tacoLocation?.longitude)!)
+            Mixpanel.mainInstance().track(event: "Added to Favorites", properties: ["name": self.tacoName.text!, "city": (tacoResults[resultNumber].location?.city)!, "state": (tacoResults[resultNumber].location?.state)!])
             print(favorites)
         }
         updateUserDefaults()
@@ -281,6 +284,7 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
     @IBAction func viewOnYelp(_ sender: Any) {
         UIApplication.shared.open(URL(string: tacoLink)!, options: [:]) { (success) in
             print("Opened Yelp site: \(self.tacoLink)")
+            Mixpanel.mainInstance().track(event: "Viewed on Yelp", properties: ["name": self.tacoResults[self.resultNumber].name!, "city": (self.tacoResults[self.resultNumber].location?.city)!, "state": (self.tacoResults[self.resultNumber].location?.state)!])
         }
     }
     
@@ -301,6 +305,7 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         phonealertController.addAction(phonecancelAction)
         
         let callAction = UIAlertAction(title: "Call", style: .default) { (action) in
+            Mixpanel.mainInstance().track(event: "Called Business", properties: ["name": self.tacoResults[self.resultNumber].name!, "city": (self.tacoResults[self.resultNumber].location?.city)!, "state": (self.tacoResults[self.resultNumber].location?.state)!])
             UIApplication.shared.open(phoneurl!, completionHandler: { (true) in
             })
         }
@@ -317,6 +322,8 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         let mapItem:MKMapItem = MKMapItem(placemark: placemark)
         mapItem.name = "\(self.tacoName.text!)"
         
+        Mixpanel.mainInstance().track(event: "Pressed Go", properties: ["from": "Individual Result", "name": self.tacoResults[self.resultNumber].name!, "city": (self.tacoResults[self.resultNumber].location?.city)!, "state": (self.tacoResults[self.resultNumber].location?.state)!])
+        
         let launchOptions:NSDictionary = NSDictionary(object: MKLaunchOptionsDirectionsModeWalking, forKey: MKLaunchOptionsDirectionsModeKey as NSCopying)
         
         let currentLocationMapItem:MKMapItem = MKMapItem.forCurrentLocation()
@@ -328,6 +335,7 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         self.resultNumber += 1
         print("result number: \(resultNumber)")
         setupResult()
+        Mixpanel.mainInstance().track(event: "Clicked Next", properties: ["Result number": self.resultNumber])
     }
 
     @IBAction func goHome(_ sender: Any) {
@@ -340,6 +348,8 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         let favorites = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "favorites") as! FavoritesViewController
         favorites.resultNumber = self.resultNumber
         favorites.tacoResults = self.tacoResults
+        
+        Mixpanel.mainInstance().track(event: "Viewed Favorites")
         
         self.present(favorites, animated: true, completion: nil)
     }

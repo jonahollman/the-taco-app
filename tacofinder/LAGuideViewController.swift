@@ -11,6 +11,7 @@ import Alamofire
 import SwiftSoup
 import CoreLocation
 import MapKit
+import Mixpanel
 
 class LAGuideViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
@@ -116,6 +117,7 @@ class LAGuideViewController: UIViewController, UITableViewDelegate, UITableViewD
             favoriteLats.append(Double(top50Dictionary[sender.tag]["lat"]!)!)
             favoriteLongs.append(Double(top50Dictionary[sender.tag]["long"]!)!)
             sender.setImage(UIImage(named: "heart-outline"), for: .normal)
+            Mixpanel.mainInstance().track(event: "Added to Favorites", properties: ["name": top50Dictionary[sender.tag]["name"]!, "lat": top50Dictionary[sender.tag]["lat"]!, "long": top50Dictionary[sender.tag]["long"]!])
         }
         updateUserDefaults()
     }
@@ -196,6 +198,7 @@ class LAGuideViewController: UIViewController, UITableViewDelegate, UITableViewD
             sender.setTitle(top50Dictionary[sender.tag]["hood"], for: .normal)
         } else {
             sender.setTitle(top50Dictionary[sender.tag]["address"], for: .normal)
+            Mixpanel.mainInstance().track(event: "Viewed Address", properties: ["name": top50Dictionary[sender.tag]["name"]!])
         }
     }
     
@@ -212,6 +215,8 @@ class LAGuideViewController: UIViewController, UITableViewDelegate, UITableViewD
         let launchOptions:NSDictionary = NSDictionary(object: MKLaunchOptionsDirectionsModeDriving, forKey: MKLaunchOptionsDirectionsModeKey as NSCopying)
         
         let currentLocationMapItem:MKMapItem = MKMapItem.forCurrentLocation()
+        
+        Mixpanel.mainInstance().track(event: "Pressed Go", properties: ["from": "Top 50 LA", "name": top50Dictionary[sender.tag]["name"]!, "lat": coordinate.latitude, "long": coordinate.longitude])
         
         MKMapItem.openMaps(with: [currentLocationMapItem, mapItem], launchOptions: launchOptions as? [String : AnyObject])
     }
