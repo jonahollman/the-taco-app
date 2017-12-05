@@ -77,7 +77,7 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
             } else {
                 self.tacoPhone.isHidden = true
             }
-            self.tacoLink = String(describing: result.url)
+            self.tacoLink = "https://www.yelp.com/biz/\(result.id!)"
             self.setupStars(rating: result.rating!)
             self.setupHours(id: result.id!, day: self.getDay())
             Mixpanel.mainInstance().track(event: "Viewed Taco Result", properties: ["name": result.name!, "city": (result.location?.city!)!, "state": (result.location?.state!)!])
@@ -89,9 +89,7 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
     
     func setupMap(location: CDYelpCoordinates) {
         locationMap.delegate = self
-        if self.locationMap.annotations.count != 0 {
-            self.locationMap.removeAnnotation(self.locationMap.annotations[0])
-        }
+        self.locationMap.removeAnnotations(self.locationMap.annotations)
         
         let center = CLLocationCoordinate2D(latitude: (location.latitude)!, longitude: (location.longitude)!)
         let pin = MKPointAnnotation()
@@ -258,13 +256,22 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
                     var todayString = String()
                     if (todayClose?.numberValue!)! > 1200 {
                         todayString = String(Int((todayClose?.numberValue!)! - 1200)) + " PM"
-                        todayString.insert(":", at: (todayClose?.index((todayClose?.endIndex)!, offsetBy: -3))!)
+                        if (todayClose?.numberValue!)! >= 2200 {
+                            todayString.insert(":", at: (todayClose?.index((todayClose?.endIndex)!, offsetBy: -2))!)
+                        } else {
+                            todayString.insert(":", at: (todayClose?.index((todayClose?.endIndex)!, offsetBy: -3))!)
+                        }
                     } else {
                         todayString = todayClose! + " AM"
                         todayString.insert(":", at: (todayClose?.index((todayClose?.endIndex)!, offsetBy: -2))!)
                     }
                     if todayString[todayString.startIndex] == "0" {
                         todayString.remove(at: todayString.startIndex)
+                    }
+                    if todayString == "0:00 AM" {
+                        todayString = "Midnight"
+                    } else if todayString == "12:00 PM" {
+                        todayString = "Noon"
                     }
                     self.tacoHours.text = "Open until \(todayString)     "
                 } else {
@@ -282,6 +289,8 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
     }
     
     @IBAction func viewOnYelp(_ sender: Any) {
+        print(tacoResults[resultNumber].id)
+        
         UIApplication.shared.open(URL(string: tacoLink)!, options: [:]) { (success) in
             print("Opened Yelp site: \(self.tacoLink)")
             Mixpanel.mainInstance().track(event: "Viewed on Yelp", properties: ["name": self.tacoResults[self.resultNumber].name!, "city": (self.tacoResults[self.resultNumber].location?.city)!, "state": (self.tacoResults[self.resultNumber].location?.state)!])
