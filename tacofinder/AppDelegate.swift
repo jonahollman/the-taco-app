@@ -26,16 +26,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         
         locationManager = CLLocationManager()
         locationManager.delegate = self
-        locationManager.requestWhenInUseAuthorization()
+        //locationManager.requestWhenInUseAuthorization()
         
         self.apiClient = CDYelpAPIClient(clientId: "wf8D2zMWtbINKMUvFcqZVg",
                                             clientSecret: "6QkPgztAkJ0vej4XEDcPLgJZ7kdoC1AKXEvJHy0wvM5MFyrkd3o3ewSTtVE07VPE")
         
         Mixpanel.initialize(token: "8a00d2a4b980ba10b9aad0fdd99c92c9")
         
-        
         return true
     }
+ 
 
     func applicationWillResignActive(_ application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.

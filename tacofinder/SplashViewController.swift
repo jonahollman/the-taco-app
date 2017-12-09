@@ -27,7 +27,7 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
     var token = UserDefaults.standard.string(forKey: "token")
     var latitude = CLLocationDegrees()
     var longitude = CLLocationDegrees()
-    var troubleConnecting = false
+    var checkLocationTimer = Timer()
     
     var tacoResults = [CDYelpBusiness]()
     
@@ -35,13 +35,13 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
         super.viewDidLoad()
         noLocationPopUp.isHidden = true
         introAnimation()
-        checkForCity()
+        checkForLocationPermission()
         setupUI()
         
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        checkForLocationPermission()
+
     }
 
     override func didReceiveMemoryWarning() {
@@ -76,20 +76,29 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
         
     }
     
-    func checkForLocationPermission() {
+    @objc func checkForLocationPermission() {
+        
+        locationManager.requestWhenInUseAuthorization()
         
         if CLLocationManager.locationServicesEnabled() {
             switch CLLocationManager.authorizationStatus() {
             case .notDetermined, .restricted, .denied:
                 self.showNoLocationPopUp()
             case .authorizedAlways, .authorizedWhenInUse:
-                print("Location access")
-                self.dismissNoLocationPopUp()
+                locationManager.startUpdatingLocation()
+                self.checkLocationTimer.invalidate()
+                if !self.noLocationPopUp.isHidden {
+                    self.dismissNoLocationPopUp()
+                }
                 checkForCity()
             }
             
         }
         
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        checkForLocationPermission()
     }
     
     func setupUI() {
@@ -99,6 +108,7 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
     }
     
     func checkForCity() {
+        
         if CLLocationManager.locationServicesEnabled() {
             if CLLocationManager.authorizationStatus() == .authorizedWhenInUse {
                 locationManager.startUpdatingLocation()
@@ -108,6 +118,7 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
                 let distanceInMiles = currentCoordinates.distance(from: losAngelesCoordinate) / 1609
                 if distanceInMiles <= 30 {
                     showCityGuide()
+                    self.checkLocationTimer.invalidate()
                     Mixpanel.mainInstance().track(event: "In City Guide Range", properties: ["City": "Los Angeles"])
                     if UserDefaults.standard.object(forKey: "laTop50") == nil {
                         fetchGuide()
@@ -134,7 +145,7 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
     func showNoLocationPopUp() {
         noLocationPopUp.layer.cornerRadius = 10
         noLocationPopUp.layer.borderColor = UIColor.gray.cgColor
-        noLocationPopUp.layer.borderWidth = 3
+        noLocationPopUp.layer.borderWidth = 2
         noLocationPopUp.isHidden = false
         noLocationPopUp.target(forAction: #selector(dismissNoLocationPopUp), withSender: self)
         UIView.animate(withDuration: 0.2, animations: {
@@ -144,6 +155,9 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
                 self.noLocationPopUp.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
             }, completion: nil)
         }
+        
+        checkLocationTimer = Timer.scheduledTimer(timeInterval: 2.0, target: self, selector: #selector(self.checkForLocationPermission), userInfo: nil, repeats: true)
+        
     }
     
     @IBAction func goToSettings(_ sender: Any) {
@@ -163,6 +177,7 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
         }) { (true) in
             self.noLocationPopUp.isHidden = true
             self.noLocationPopUp.alpha = 1
+            self.checkLocationTimer.invalidate()
         }
     }
 
@@ -187,11 +202,15 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
         self.dismissNoLocationPopUp()
     }
     
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        checkForLocationPermission()
+        print("Location status updated")
+    }
     
     func searchForTacos() {
         
-        appDelegate.apiClient.searchBusinesses(byTerm: "tacos", location: nil, latitude: self.latitude , longitude: self.longitude, radius: nil, categories: nil, locale: nil, limit: nil, offset: nil, sortBy: .distance, priceTiers: nil, openNow: true, openAt: nil, attributes: nil) { (response) in
-            if let response = response {
+        appDelegate.apiClient.searchBusinesses(byTerm: "tacos", location: nil, latitude: self.latitude , longitude: self.longitude, radius: nil, categories: nil, locale: nil, limit: nil, offset: nil, sortBy: CDYelpBusinessSortType.distance, priceTiers: nil, openNow: true, openAt: nil, attributes: nil) { (response) in
+            if let response = response, response.error == nil {
                 self.tacoResults = response.businesses!
                 if self.tacoResults.count > 0 {
                     self.performSegue(withIdentifier: "splashToResult", sender: self)
