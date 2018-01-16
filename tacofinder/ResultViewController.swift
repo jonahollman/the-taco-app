@@ -252,7 +252,7 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         appDelegate.apiClient.fetchBusiness(forId: id, locale: nil) { (business) in
             if let business = business {
                 if business.hours!.count > 0 {
-                    var todayClose = business.hours![0].open![day].end
+                    let todayClose = business.hours![0].open![day].end
                     var todayString = String()
                     if (todayClose?.numberValue!)! > 1200 {
                         todayString = String(Int((todayClose?.numberValue!)! - 1200)) + " PM"
@@ -289,7 +289,7 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
     }
     
     @IBAction func viewOnYelp(_ sender: Any) {
-        print(tacoResults[resultNumber].id)
+        print(tacoResults[resultNumber].id as Any)
         
         UIApplication.shared.open(URL(string: tacoLink)!, options: [:]) { (success) in
             print("Opened Yelp site: \(self.tacoLink)")

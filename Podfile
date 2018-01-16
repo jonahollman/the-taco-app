@@ -8,5 +8,6 @@ target 'tacofinder' do
   # Pods for tacofinder
   pod 'CDYelpFusionKit', '1.4.0'
   pod ‘SwiftSoup’
+  pod ‘Device’
 
 end
