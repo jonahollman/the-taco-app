@@ -11,6 +11,7 @@ import CDYelpFusionKit
 import MapKit
 import CoreLocation
 import Mixpanel
+import Device
 
 class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDelegate {
     
@@ -27,7 +28,12 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
     @IBOutlet var favoritesButton: UIButton!
     @IBOutlet var nextButton: UIButton!
     @IBOutlet var homeButton: UIButton!
+    @IBOutlet var mapHeight: NSLayoutConstraint!
     
+    @IBOutlet var tacoHoursTop: NSLayoutConstraint!
+    @IBOutlet var nextWidth: NSLayoutConstraint!
+    @IBOutlet var favesWidth: NSLayoutConstraint!
+    @IBOutlet var homeWidth: NSLayoutConstraint!
     var locationManager = CLLocationManager()
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
     var tacoResults = [CDYelpBusiness]()
@@ -130,6 +136,19 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
     }
     
     func setupUI() {
+        
+        if Device.size() == Size.screen4Inch {
+            mapHeight.constant = 130
+            homeWidth.constant = 86
+            favesWidth.constant = 86
+            nextWidth.constant = 86
+            tacoHoursTop.constant = 25
+        }
+        
+        tacoPhone.layer.borderColor = UIColor.black.cgColor
+        tacoPhone.layer.borderWidth = 2
+        tacoPhone.layer.cornerRadius = 5
+        
         goButton.layer.shadowColor = UIColor.blue.withAlphaComponent(0.8).cgColor
         goButton.layer.shadowOffset = CGSize(width: 0.0, height: 2.0)
         goButton.layer.shadowOpacity = 1.0

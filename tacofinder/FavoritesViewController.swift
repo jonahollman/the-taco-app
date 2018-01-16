@@ -11,6 +11,7 @@ import CoreLocation
 import CDYelpFusionKit
 import MapKit
 import Mixpanel
+import Device
 
 class FavoritesViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, CLLocationManagerDelegate {
 
@@ -21,6 +22,8 @@ class FavoritesViewController: UIViewController, UITableViewDataSource, UITableV
     var resultNumber = Int()
     var tacoResults = [CDYelpBusiness]()
     
+    @IBOutlet var emptyTableTop: NSLayoutConstraint!
+    @IBOutlet var emptyTableBottom: NSLayoutConstraint!
     @IBOutlet var emptyTableAlert: UIView!
     var locationManager = CLLocationManager()
     
@@ -39,6 +42,11 @@ class FavoritesViewController: UIViewController, UITableViewDataSource, UITableV
             self.hideTableAndDisplayAlert()
         } else {
             self.showTableAndHideAlert()
+        }
+        
+        if Device.size() == Size.screen4Inch {
+            emptyTableBottom.constant = 60
+            emptyTableTop.constant = 45
         }
         
         favoritesTable.delegate = self

@@ -12,6 +12,7 @@ import SwiftSoup
 import CoreLocation
 import MapKit
 import Mixpanel
+import Device
 
 class LAGuideViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
@@ -22,7 +23,6 @@ class LAGuideViewController: UIViewController, UITableViewDelegate, UITableViewD
     var favorites = [String]()
     var favoriteLats = [CLLocationDegrees]()
     var favoriteLongs = [CLLocationDegrees]()
-    
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -228,7 +228,11 @@ class LAGuideViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     override var prefersStatusBarHidden: Bool {
-        return true
+        if Device.size() == Size.screen5_8Inch {
+            return false
+        } else {
+            return true
+        }
     }
     
 

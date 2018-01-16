@@ -12,6 +12,7 @@ import CDYelpFusionKit
 import Alamofire
 import SwiftSoup
 import Mixpanel
+import Device
 
 class SplashViewController: UIViewController, CLLocationManagerDelegate {
     
@@ -102,6 +103,11 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
     }
     
     func setupUI() {
+        
+        if Device.size() == Size.screen4Inch {
+            self.losAngelesGuideButton.titleLabel?.font = UIFont.avenirMediumFontOfSize(size: 18)
+        }
+        
         self.losAngelesGuideButton.layer.cornerRadius = self.losAngelesGuideButton.layer.frame.height / 2
         self.losAngelesGuideButton.layer.borderWidth = 2
         self.losAngelesGuideButton.layer.borderColor = UIColor(red: 1, green: 111/255, blue: 104/255, alpha: 1).cgColor
@@ -316,5 +322,11 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
         return true
     }
     
+}
+
+extension UIFont {
+    class func avenirMediumFontOfSize(size: CGFloat) -> UIFont {
+        return UIFont(name: "Avenir Next Medium", size: size)!
+    }
 }
 
