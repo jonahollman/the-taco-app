@@ -92,15 +92,21 @@ class FavoritesViewController: UIViewController, UITableViewDataSource, UITableV
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
+            
+            Mixpanel.mainInstance().track(event: "Removed from Favorites", properties: ["name": favorites[indexPath.row], "lat": favoriteLats[indexPath.row], "long": favoriteLongs[indexPath.row]])
+            
             favorites.remove(at: indexPath.row)
             favoriteLats.remove(at: indexPath.row)
             favoriteLongs.remove(at: indexPath.row)
             
-            Mixpanel.mainInstance().track(event: "Removed from Favorites", properties: ["name": favorites[indexPath.row], "lat": favoriteLats[indexPath.row], "long": favoriteLongs[indexPath.row]])
-            
             updateUserDefaults()
             
-            favoritesTable.reloadData()
+            if favorites.count == 0 {
+                hideTableAndDisplayAlert()
+            } else {
+                favoritesTable.reloadData()
+            }
+            
         }
     }
     
