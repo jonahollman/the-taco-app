@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0700"
+   LastUpgradeVersion = "0930"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -13,11 +13,11 @@
             buildForProfiling = "YES"
             buildForArchiving = "YES">
             <BuildableReference
-               BuildableIdentifier = 'primary'
-               BlueprintIdentifier = '18D2870BACFB5DD6CDDD58C51A59995A'
-               BlueprintName = 'CDYelpFusionKit'
-               ReferencedContainer = 'container:Pods.xcodeproj'
-               BuildableName = 'CDYelpFusionKit.framework'>
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "ED520996576C5D960DE8F29C2A6AC7F6"
+               BlueprintName = "CDYelpFusionKit"
+               ReferencedContainer = "container:Pods.xcodeproj"
+               BuildableName = "CDYelpFusionKit.framework">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>

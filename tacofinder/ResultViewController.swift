@@ -268,33 +268,41 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
     }
     
     func setupHours(id: String, day: Int) {
+        self.tacoHours.text = "Open     "
         appDelegate.apiClient.fetchBusiness(forId: id, locale: nil) { (business) in
             if let business = business {
                 if business.hours!.count > 0 {
-                    let todayClose = business.hours![0].open![day].end
-                    var todayString = String()
-                    if (todayClose?.numberValue!)! > 1200 {
-                        todayString = String(Int((todayClose?.numberValue!)! - 1200)) + " PM"
-                        if (todayClose?.numberValue!)! >= 2200 {
-                            todayString.insert(":", at: (todayClose?.index((todayClose?.endIndex)!, offsetBy: -2))!)
+                    if business.hours![0].open!.count > 2 {
+                        if let todayClose = business.hours![0].open![day].end {
+                            var todayString = String()
+                            if (todayClose.numberValue!) > 1200 {
+                                todayString = String(Int((todayClose.numberValue!) - 1200)) + " PM"
+                                if (todayClose.numberValue!) >= 2200 {
+                                    todayString.insert(":", at: (todayClose.index((todayClose.endIndex), offsetBy: -2)))
+                                } else {
+                                    todayString.insert(":", at: (todayClose.index((todayClose.endIndex), offsetBy: -3)))
+                                }
+                            } else {
+                                todayString = todayClose + " AM"
+                                todayString.insert(":", at: (todayClose.index((todayClose.endIndex), offsetBy: -2)))
+                            }
+                            if todayString[todayString.startIndex] == "0" {
+                                todayString.remove(at: todayString.startIndex)
+                            }
+                            if todayString == "0:00 AM" {
+                                todayString = "Midnight"
+                            } else if todayString == "12:00 PM" {
+                                todayString = "Noon"
+                            }
+                            self.tacoHours.text = "Open until \(todayString)     "
                         } else {
-                            todayString.insert(":", at: (todayClose?.index((todayClose?.endIndex)!, offsetBy: -3))!)
+                            self.tacoHours.text = "Open     "
                         }
                     } else {
-                        todayString = todayClose! + " AM"
-                        todayString.insert(":", at: (todayClose?.index((todayClose?.endIndex)!, offsetBy: -2))!)
+                        self.tacoHours.text = "Open     "
                     }
-                    if todayString[todayString.startIndex] == "0" {
-                        todayString.remove(at: todayString.startIndex)
-                    }
-                    if todayString == "0:00 AM" {
-                        todayString = "Midnight"
-                    } else if todayString == "12:00 PM" {
-                        todayString = "Noon"
-                    }
-                    self.tacoHours.text = "Open until \(todayString)     "
                 } else {
-                    self.tacoHours.isHidden = true
+                    self.tacoHours.text = "Open     "
                 }
             }
         }
@@ -362,8 +370,14 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
     @IBAction func nextResult(_ sender: Any) {
         self.resultNumber += 1
         print("result number: \(resultNumber)")
-        setupResult()
-        Mixpanel.mainInstance().track(event: "Clicked Next", properties: ["Result number": self.resultNumber])
+        if self.resultNumber <= 19 {
+            setupResult()
+            Mixpanel.mainInstance().track(event: "Clicked Next", properties: ["Result number": self.resultNumber])
+        } else {
+            self.resultNumber = 0
+            setupResult()
+            Mixpanel.mainInstance().track(event: "Reached 20 Results")
+        }
     }
 
     @IBAction func goHome(_ sender: Any) {

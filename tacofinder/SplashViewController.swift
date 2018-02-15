@@ -30,6 +30,11 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
     var longitude = CLLocationDegrees()
     var checkLocationTimer = Timer()
     
+    var activityIndicator = UIActivityIndicatorView()
+    var strLabel = UILabel()
+    
+    let effectView = UIVisualEffectView(effect: UIBlurEffect(style: .dark))
+    
     var tacoResults = [CDYelpBusiness]()
     
     override func viewDidLoad() {
@@ -65,12 +70,12 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
             self.checkForLocationPermission()
         })
         
-        UIView.animate(withDuration: 1.1, delay: 0.5, usingSpringWithDamping: 0.5, initialSpringVelocity: 3.1, options: UIViewAnimationOptions.allowUserInteraction, animations: {
+        UIView.animate(withDuration: 1.1, delay: 0.5, usingSpringWithDamping: 0.5, initialSpringVelocity: 3.1, options: [], animations: {
             self.tacoBottom.transform = CGAffineTransform.identity
         }) { (true) in
         }
         
-        UIView.animate(withDuration: 1.3, delay: 0.7, usingSpringWithDamping: 0.35, initialSpringVelocity: 3.2, options: UIViewAnimationOptions.allowUserInteraction, animations: {
+        UIView.animate(withDuration: 1.3, delay: 0.7, usingSpringWithDamping: 0.35, initialSpringVelocity: 3.2, options: [], animations: {
             self.tacoTop.transform = CGAffineTransform.identity
         }) { (true) in
         }
@@ -111,6 +116,7 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
         self.losAngelesGuideButton.layer.cornerRadius = self.losAngelesGuideButton.layer.frame.height / 2
         self.losAngelesGuideButton.layer.borderWidth = 2
         self.losAngelesGuideButton.layer.borderColor = UIColor(red: 1, green: 111/255, blue: 104/255, alpha: 1).cgColor
+        
     }
     
     func checkForCity() {
@@ -171,11 +177,10 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
         let settingsUrl = URL(string: UIApplicationOpenSettingsURLString)
     
         UIApplication.shared.open(settingsUrl!, completionHandler: { (success) in
-                print("Settings opened")
-            })
+            print("Settings opened")
+        })
         
     }
-    
     
     @objc func dismissNoLocationPopUp() {
         UIView.animate(withDuration: 0.3, animations: {
@@ -186,6 +191,29 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
             self.checkLocationTimer.invalidate()
         }
     }
+    
+    func showActivityIndicator() {
+        strLabel.removeFromSuperview()
+        activityIndicator.removeFromSuperview()
+        effectView.removeFromSuperview()
+        
+        effectView.frame = CGRect(x: view.frame.midX - 130, y: view.frame.midY - 23 , width: 260, height: 46)
+        effectView.layer.cornerRadius = 15
+        effectView.layer.masksToBounds = true
+        
+        activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: .white)
+        activityIndicator.frame = CGRect(x: effectView.frame.minX + 5 , y: effectView.frame.midY - 23, width: 46, height: 46)
+        activityIndicator.startAnimating()
+        
+        strLabel = UILabel(frame: CGRect(x: activityIndicator.frame.maxX + 5, y: view.frame.midY - 23, width: 200, height: 46))
+        strLabel.text = "Finding tacos near you"
+        strLabel.font = UIFont.avenirMediumFontOfSize(size: 17)
+        strLabel.textColor = UIColor.white
+        
+        view.addSubview(effectView)
+        view.addSubview(activityIndicator)
+        view.addSubview(strLabel)
+    }
 
     @IBAction func tacosTapped(_ sender: Any) {
         
@@ -194,12 +222,16 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
             case .notDetermined, .restricted, .denied:
                 self.showNoLocationPopUp()
             case .authorizedAlways, .authorizedWhenInUse:
+                showActivityIndicator()
                 print("Location access")
                 self.dismissNoLocationPopUp()
                 Mixpanel.mainInstance().track(event: "Tapped for Tacos")
                 searchForTacos()
+                
             }
             
+        } else {
+            showNoLocationPopUp()
         }
         
     }

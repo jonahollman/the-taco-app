@@ -1,10 +1,10 @@
 //
-//  CDYelpOAuthCredential.swift
+//  CDImage.swift
 //  CDYelpFusionKit
 //
-//  Created by Christopher de Haan on 11/7/16.
+//  Created by Christopher de Haan on 11/28/17.
 //
-//  Copyright (c) 2016-2017 Christopher de Haan <contact@christopherdehaan.me>
+//  Copyright © 2016-2018 Christopher de Haan <contact@christopherdehaan.me>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -25,20 +25,12 @@
 //  THE SOFTWARE.
 //
 
-import ObjectMapper
+import Foundation
 
-class CDYelpOAuthCredential: Mappable {
-
-    var accessToken: String?
-    var expiresIn: Int?
-    var tokenType: String?
-    
-    required init?(map: Map) {
-    }
-    
-    func mapping(map: Map) {
-        accessToken <- map["access_token"]
-        expiresIn   <- map["expires_in"]
-        tokenType   <- map["token_type"]
-    }
-}
+#if os(iOS) || os(tvOS) || os(watchOS)
+    import UIKit
+    public typealias CDImage = UIImage
+#elseif os(macOS)
+    import Cocoa
+    public typealias CDImage = NSImage
+#endif

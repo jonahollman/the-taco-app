@@ -1,10 +1,10 @@
 //
-//  CDYelpOAuthRouter.swift
+//  CDColor.swift
 //  CDYelpFusionKit
 //
-//  Created by Christopher de Haan on 11/7/16.
+//  Created by Christopher de Haan on 11/28/17.
 //
-//  Copyright (c) 2016-2017 Christopher de Haan <contact@christopherdehaan.me>
+//  Copyright © 2016-2018 Christopher de Haan <contact@christopherdehaan.me>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -25,37 +25,12 @@
 //  THE SOFTWARE.
 //
 
-import Alamofire
+import Foundation
 
-enum CDYelpOAuthRouter: URLRequestConvertible {
-    
-    case authorize(parameters: Parameters)
-    
-    var method: HTTPMethod {
-        switch self {
-        case .authorize(parameters: _):
-            return .post
-        }
-    }
-    
-    var path: String {
-        switch self {
-        case .authorize(parameters: _):
-            return "oauth2/token"
-        }
-    }
-    
-    func asURLRequest() throws -> URLRequest {
-        let url = try CDYelpURL.oAuth.asURL()
-        
-        var urlRequest = URLRequest(url: url.appendingPathComponent(path))
-        urlRequest.httpMethod = method.rawValue
-        
-        switch self {
-        case .authorize(let parameters):
-            urlRequest = try URLEncoding.default.encode(urlRequest, with: parameters)
-        }
-        
-        return urlRequest
-    }
-}
+#if os(iOS) || os(tvOS) || os(watchOS)
+    import UIKit
+    public typealias CDColor = UIColor
+#elseif os(macOS)
+    import Cocoa
+    public typealias CDColor = NSColor
+#endif

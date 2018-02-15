@@ -6,7 +6,7 @@ target 'tacofinder' do
   use_frameworks!
 
   # Pods for tacofinder
-  pod 'CDYelpFusionKit', '1.4.0'
+  pod 'CDYelpFusionKit', ‘1.5.0’
   pod ‘SwiftSoup’
   pod ‘Device’
 
