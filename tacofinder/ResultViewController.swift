@@ -189,7 +189,7 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         let myCalendar = Calendar(identifier: .gregorian)
         let myComponents = myCalendar.dateComponents([Calendar.Component.weekday], from: todayDate)
         let weekDay = myComponents.weekday!
-        print(weekDay)
+        print("Weekday: \(weekDay)")
         switch weekDay {
         case 1:
             return 6
@@ -206,7 +206,7 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
             self.favorites.remove(at: index!)
             self.favoriteLats.remove(at: index!)
             self.favoriteLongs.remove(at: index!)
-            print(favorites)
+            print("Favorites: \(favorites)")
         } else {
             self.favoritesIcon.image = UIImage(named: "heart-outline")
             self.isFavorite = true
@@ -214,7 +214,7 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
             self.favoriteLats.append((self.tacoLocation?.latitude!)!)
             self.favoriteLongs.append((self.tacoLocation?.longitude)!)
             Mixpanel.mainInstance().track(event: "Added to Favorites", properties: ["name": self.tacoName.text!, "city": (tacoResults[resultNumber].location?.city)!, "state": (tacoResults[resultNumber].location?.state)!])
-            print(favorites)
+            print("Favorites: \(favorites)")
         }
         updateUserDefaults()
     }
@@ -272,7 +272,7 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         appDelegate.apiClient.fetchBusiness(forId: id, locale: nil) { (business) in
             if let business = business {
                 if business.hours!.count > 0 {
-                    if business.hours![0].open!.count > 2 {
+                    if business.hours![0].open!.count > 0 {
                         if let todayClose = business.hours![0].open![day].end {
                             var todayString = String()
                             if (todayClose.numberValue!) > 1200 {
@@ -312,7 +312,7 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         UserDefaults.standard.set(self.favorites, forKey: "favorites")
         UserDefaults.standard.set(self.favoriteLats, forKey: "favoriteLats")
         UserDefaults.standard.set(self.favoriteLongs, forKey: "favoriteLongs")
-        print(favorites)
+        print("Favorites: \(favorites)")
     }
     
     @IBAction func viewOnYelp(_ sender: Any) {
@@ -327,7 +327,7 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
     
     @IBAction func callTaco(_ sender: Any) {
         let phoneurl = URL(string: "tel://\(phoneNumber)")
-        print(phoneurl!)
+        print("Phone: \(phoneurl!)")
 
         // Are you sure you want to call?
         

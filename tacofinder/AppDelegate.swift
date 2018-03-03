@@ -46,6 +46,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
         
         UserDefaults.standard.set(nil, forKey: "laTop50")
+        print("Defaults cleared")
         
     }
 
@@ -62,6 +63,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         // Saves changes in the application's managed object context before the application terminates.
         
         UserDefaults.standard.set(nil, forKey: "laTop50")
+        print("Defaults cleared")
         
         self.saveContext()
     }
