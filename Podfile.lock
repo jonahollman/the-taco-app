@@ -3,6 +3,7 @@ PODS:
   - AlamofireObjectMapper (5.0.0):
     - Alamofire (~> 4.1)
     - ObjectMapper (~> 3.0)
+  - Bugsnag (5.17.2)
   - CDYelpFusionKit (1.5.0):
     - AlamofireObjectMapper (= 5.0.0)
   - Device (3.1.2)
@@ -13,6 +14,7 @@ PODS:
   - SwiftSoup (1.7.4)
 
 DEPENDENCIES:
+  - Bugsnag
   - CDYelpFusionKit (= 1.5.0)
   - Device
   - Mixpanel-swift
@@ -22,6 +24,7 @@ SPEC REPOS:
   https://github.com/cocoapods/specs.git:
     - Alamofire
     - AlamofireObjectMapper
+    - Bugsnag
     - CDYelpFusionKit
     - Device
     - Mixpanel-swift
@@ -31,12 +34,13 @@ SPEC REPOS:
 SPEC CHECKSUMS:
   Alamofire: 3ec537f71edc9804815215393ae2b1a8ea33a844
   AlamofireObjectMapper: 5fafc816351cbbc0d486611aaeba7461c0cbad49
+  Bugsnag: f44353744bf11b23118efba6e695dd453c63c1b2
   CDYelpFusionKit: 665cf3881bff25db3a47ca3a4e3497e3a1ea552a
   Device: 62242076214c30fb5760174b3601cefafa70a481
   Mixpanel-swift: 92fd02942ef4bf5a1bd0630a88223a417b8c8b39
   ObjectMapper: 5311bd50ca732930959e7ca1a2de43ab823a5ced
   SwiftSoup: 92f5b348c131aed8af04f4326db1579ab19fa08c
 
-PODFILE CHECKSUM: df56238fcbf25487f9ba16323b0712071ec576a7
+PODFILE CHECKSUM: ed61745605855c1d4d38a3f8865fcd716c06ae36
 
 COCOAPODS: 1.5.3

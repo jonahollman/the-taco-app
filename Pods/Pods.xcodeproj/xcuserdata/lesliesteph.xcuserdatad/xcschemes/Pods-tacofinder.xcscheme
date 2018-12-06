@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B5F65CEAFB3AA097FD5FB5A25766B8C7"
+               BlueprintIdentifier = "F83B3F4054014A598B7640D6B8FA950D"
                BuildableName = "Pods_tacofinder.framework"
                BlueprintName = "Pods-tacofinder"
                ReferencedContainer = "container:Pods.xcodeproj">
@@ -45,7 +45,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "B5F65CEAFB3AA097FD5FB5A25766B8C7"
+            BlueprintIdentifier = "F83B3F4054014A598B7640D6B8FA950D"
             BuildableName = "Pods_tacofinder.framework"
             BlueprintName = "Pods-tacofinder"
             ReferencedContainer = "container:Pods.xcodeproj">

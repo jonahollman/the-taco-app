@@ -13,6 +13,7 @@ import Foundation
 import Security
 import CDYelpFusionKit
 import Mixpanel
+import Bugsnag
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate {
@@ -31,6 +32,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         self.apiClient = CDYelpAPIClient(apiKey: "p5wRQz_bTsVuBvXSZgvPzJWbocUfW2F4LeUio0kWV3VmywqYN4vj1wyLLlWG0PHLowT3Lx9qGVOoCQ9e8Vw2HD0OSQNqK_ntTqHYTkP9PwSbmRwHTpJzKGxHPBn4WHYx")
         
         Mixpanel.initialize(token: "8a00d2a4b980ba10b9aad0fdd99c92c9")
+        Bugsnag.start(withApiKey: "84c63bf85444562ba40b0ddf1d8c7919")
         
         return true
     }

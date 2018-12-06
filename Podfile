@@ -10,5 +10,6 @@ target 'tacofinder' do
   pod ‘SwiftSoup’
   pod ‘Device’
   pod 'Mixpanel-swift'
+  pod 'Bugsnag'
 
 end
