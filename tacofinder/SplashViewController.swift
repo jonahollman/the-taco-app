@@ -124,18 +124,20 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
         if CLLocationManager.locationServicesEnabled() {
             if CLLocationManager.authorizationStatus() == .authorizedWhenInUse {
                 locationManager.startUpdatingLocation()
-                self.latitude = (locationManager.location?.coordinate.latitude)!
-                self.longitude = (locationManager.location?.coordinate.longitude)!
-                let currentCoordinates = CLLocation(latitude: latitude, longitude: longitude)
-                let distanceInMiles = currentCoordinates.distance(from: losAngelesCoordinate) / 1609
-                if distanceInMiles <= 30 {
-                    showCityGuide()
-                    self.checkLocationTimer.invalidate()
-                    Mixpanel.mainInstance().track(event: "In City Guide Range", properties: ["City": "Los Angeles"])
-                    if UserDefaults.standard.object(forKey: "laTop50") == nil {
-                        fetchGuide()
-                    } else {
-                        print("Top 50 Stored")
+                if (locationManager.location?.coordinate.latitude) != nil {
+                    self.latitude = (locationManager.location?.coordinate.latitude)!
+                    self.longitude = (locationManager.location?.coordinate.longitude)!
+                    let currentCoordinates = CLLocation(latitude: latitude, longitude: longitude)
+                    let distanceInMiles = currentCoordinates.distance(from: losAngelesCoordinate) / 1609
+                    if distanceInMiles <= 30 {
+                        showCityGuide()
+                        self.checkLocationTimer.invalidate()
+                        Mixpanel.mainInstance().track(event: "In City Guide Range", properties: ["City": "Los Angeles"])
+                        if UserDefaults.standard.object(forKey: "laTop50") == nil {
+                            fetchGuide()
+                        } else {
+                            print("Top 50 Stored")
+                        }
                     }
                 }
             }

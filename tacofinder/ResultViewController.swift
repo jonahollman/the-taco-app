@@ -59,8 +59,13 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         }
         
         if UserDefaults.standard.object(forKey: "laTop50") != nil {
-            top50Dictionary = UserDefaults.standard.object(forKey: "laTop50") as! [[String: String]]
-            print("Top 50 Stored")
+            if (UserDefaults.standard.object(forKey: "laTop50") as? [[String: String]]) != nil {
+                top50Dictionary = UserDefaults.standard.object(forKey: "laTop50") as! [[String: String]]
+                print("Top 50 Stored")
+            } else {
+                print("Top 50 Not Stored")
+            }
+            
         }
         
         setupUI()
@@ -272,29 +277,39 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         appDelegate.apiClient.fetchBusiness(forId: id, locale: nil) { (business) in
             if let business = business {
                 if business.hours!.count > 0 {
-                    if business.hours![0].open!.count > 0 {
-                        if let todayClose = business.hours![0].open![day].end {
-                            var todayString = String()
-                            if (todayClose.numberValue!) > 1200 {
-                                todayString = String(Int((todayClose.numberValue!) - 1200)) + " PM"
-                                if (todayClose.numberValue!) >= 2200 {
-                                    todayString.insert(":", at: (todayClose.index((todayClose.endIndex), offsetBy: -2)))
+                    if business.hours![0].open != nil {
+                        if business.hours![0].open!.count > day + 1 {
+                            if business.hours![0].open![day].end != nil {
+                                if let todayClose = business.hours![0].open![day].end {
+                                    var todayString = String()
+                                    if (todayClose.numberValue!) > 1200 {
+                                        todayString = String(Int((todayClose.numberValue!) - 1200)) + " PM"
+                                        if (todayClose.numberValue!) >= 2200 {
+                                            todayString.insert(":", at: (todayClose.index((todayClose.endIndex), offsetBy: -2)))
+                                        } else {
+                                            todayString.insert(":", at: (todayClose.index((todayClose.endIndex), offsetBy: -3)))
+                                        }
+                                    } else {
+                                        todayString = todayClose + " AM"
+                                        todayString.insert(":", at: (todayClose.index((todayClose.endIndex), offsetBy: -2)))
+                                    }
+                                    if todayString[todayString.startIndex] == "0" {
+                                        todayString.remove(at: todayString.startIndex)
+                                    }
+                                    if todayString == "0:00 AM" {
+                                        todayString = "Midnight"
+                                    } else if todayString == "12:00 PM" {
+                                        todayString = "Noon"
+                                    } else if todayString == "0:30 AM" {
+                                        todayString = "12:30 AM"
+                                    }
+                                    self.tacoHours.text = "Open until \(todayString)     "
                                 } else {
-                                    todayString.insert(":", at: (todayClose.index((todayClose.endIndex), offsetBy: -3)))
+                                    self.tacoHours.text = "Open     "
                                 }
                             } else {
-                                todayString = todayClose + " AM"
-                                todayString.insert(":", at: (todayClose.index((todayClose.endIndex), offsetBy: -2)))
+                                self.tacoHours.text = "Open     "
                             }
-                            if todayString[todayString.startIndex] == "0" {
-                                todayString.remove(at: todayString.startIndex)
-                            }
-                            if todayString == "0:00 AM" {
-                                todayString = "Midnight"
-                            } else if todayString == "12:00 PM" {
-                                todayString = "Noon"
-                            }
-                            self.tacoHours.text = "Open until \(todayString)     "
                         } else {
                             self.tacoHours.text = "Open     "
                         }
@@ -333,7 +348,7 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         
         let phonealertController = UIAlertController(
             title: "Call \(tacoResults[resultNumber].name!)?",
-            message: "Are you sure you want to call ?",
+            message: "Are you sure you want to call?",
             preferredStyle: .alert)
         
         let phonecancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
