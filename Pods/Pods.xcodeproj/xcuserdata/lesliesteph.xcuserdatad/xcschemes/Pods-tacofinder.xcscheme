@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "14A2F25793F3D07C27C8C3D19AE70545"
+               BlueprintIdentifier = "B5F65CEAFB3AA097FD5FB5A25766B8C7"
                BuildableName = "Pods_tacofinder.framework"
                BlueprintName = "Pods-tacofinder"
                ReferencedContainer = "container:Pods.xcodeproj">
@@ -26,7 +26,6 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      language = ""
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
       </Testables>
@@ -37,7 +36,6 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      language = ""
       launchStyle = "0"
       useCustomWorkingDirectory = "NO"
       ignoresPersistentStateOnLaunch = "NO"
@@ -47,7 +45,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "14A2F25793F3D07C27C8C3D19AE70545"
+            BlueprintIdentifier = "B5F65CEAFB3AA097FD5FB5A25766B8C7"
             BuildableName = "Pods_tacofinder.framework"
             BlueprintName = "Pods-tacofinder"
             ReferencedContainer = "container:Pods.xcodeproj">

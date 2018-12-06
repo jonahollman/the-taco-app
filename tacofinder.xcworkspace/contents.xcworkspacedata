@@ -7,7 +7,4 @@
    <FileRef
       location = "group:Pods/Pods.xcodeproj">
    </FileRef>
-   <FileRef
-      location = "group:../../../Downloads/mixpanel-swift-swift4/Mixpanel.xcodeproj">
-   </FileRef>
 </Workspace>

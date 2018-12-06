@@ -9,5 +9,6 @@ target 'tacofinder' do
   pod 'CDYelpFusionKit', ‘1.5.0’
   pod ‘SwiftSoup’
   pod ‘Device’
+  pod 'Mixpanel-swift'
 
 end

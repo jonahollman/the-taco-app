@@ -14,7 +14,7 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "ED520996576C5D960DE8F29C2A6AC7F6"
+               BlueprintIdentifier = "F3EFB95B56FB4A097C1FFD23743855CD"
                BlueprintName = "CDYelpFusionKit"
                ReferencedContainer = "container:Pods.xcodeproj"
                BuildableName = "CDYelpFusionKit.framework">

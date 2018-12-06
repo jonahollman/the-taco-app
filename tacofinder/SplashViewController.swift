@@ -174,7 +174,7 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
     
     @IBAction func goToSettings(_ sender: Any) {
         dismissNoLocationPopUp()
-        let settingsUrl = URL(string: UIApplicationOpenSettingsURLString)
+        let settingsUrl = URL(string: UIApplication.openSettingsURLString)
     
         UIApplication.shared.open(settingsUrl!, completionHandler: { (success) in
             print("Settings opened")
@@ -201,7 +201,7 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
         effectView.layer.cornerRadius = 15
         effectView.layer.masksToBounds = true
         
-        activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: .white)
+        activityIndicator = UIActivityIndicatorView(style: .white)
         activityIndicator.frame = CGRect(x: effectView.frame.minX + 5 , y: effectView.frame.midY - 23, width: 46, height: 46)
         activityIndicator.startAnimating()
         

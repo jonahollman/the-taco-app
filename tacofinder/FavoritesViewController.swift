@@ -90,7 +90,7 @@ class FavoritesViewController: UIViewController, UITableViewDataSource, UITableV
         return cell
     }
     
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             
             Mixpanel.mainInstance().track(event: "Removed from Favorites", properties: ["name": favorites[indexPath.row], "lat": favoriteLats[indexPath.row], "long": favoriteLongs[indexPath.row]])

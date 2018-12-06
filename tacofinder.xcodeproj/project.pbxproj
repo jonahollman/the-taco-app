@@ -13,8 +13,6 @@
 		2BA6C1231F8AD3A700ED3C13 /* tacofinder.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 2BA6C1211F8AD3A700ED3C13 /* tacofinder.xcdatamodeld */; };
 		2BA6C1251F8AD3A700ED3C13 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2BA6C1241F8AD3A700ED3C13 /* Assets.xcassets */; };
 		2BA6C1281F8AD3A700ED3C13 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2BA6C1261F8AD3A700ED3C13 /* LaunchScreen.storyboard */; };
-		2BAB86121FD4CAE600364251 /* Mixpanel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BAB86111FD4CAE600364251 /* Mixpanel.framework */; };
-		2BAB86131FD4CAE600364251 /* Mixpanel.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2BAB86111FD4CAE600364251 /* Mixpanel.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		2BCDF7061FCE6C2600E87BF4 /* LAGuideViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BCDF7051FCE6C2600E87BF4 /* LAGuideViewController.swift */; };
 		2BCDF7081FCE6D0F00E87BF4 /* Top50TableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BCDF7071FCE6D0F00E87BF4 /* Top50TableViewCell.swift */; };
 		2BD499CA1F929A2000BAB0FF /* ResultViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BD499C91F929A2000BAB0FF /* ResultViewController.swift */; };
@@ -29,7 +27,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				2BAB86131FD4CAE600364251 /* Mixpanel.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -46,7 +43,6 @@
 		2BA6C1241F8AD3A700ED3C13 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2BA6C1271F8AD3A700ED3C13 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		2BA6C1291F8AD3A700ED3C13 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		2BAB86111FD4CAE600364251 /* Mixpanel.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Mixpanel.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2BCDF7051FCE6C2600E87BF4 /* LAGuideViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LAGuideViewController.swift; sourceTree = "<group>"; };
 		2BCDF7071FCE6D0F00E87BF4 /* Top50TableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Top50TableViewCell.swift; sourceTree = "<group>"; };
 		2BD499C91F929A2000BAB0FF /* ResultViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultViewController.swift; sourceTree = "<group>"; };
@@ -60,7 +56,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2BAB86121FD4CAE600364251 /* Mixpanel.framework in Frameworks */,
 				7D4BF72F767C3D7721147DEE /* Pods_tacofinder.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -71,7 +66,6 @@
 		2BA6C10E1F8AD3A700ED3C13 = {
 			isa = PBXGroup;
 			children = (
-				2BAB86111FD4CAE600364251 /* Mixpanel.framework */,
 				2BA6C1191F8AD3A700ED3C13 /* tacofinder */,
 				2BA6C1181F8AD3A700ED3C13 /* Products */,
 				C941FEAD2D59A2D445A9A722 /* Pods */,
@@ -134,7 +128,6 @@
 				2BA6C1141F8AD3A700ED3C13 /* Frameworks */,
 				2BA6C1151F8AD3A700ED3C13 /* Resources */,
 				14EFE62D6204B79E27438967 /* [CP] Embed Pods Frameworks */,
-				FF0946CA4A12DEFFAE875783 /* [CP] Copy Pods Resources */,
 				2B98A3961FD335AD00EACF26 /* Embed Frameworks */,
 			);
 			buildRules = (
@@ -153,11 +146,12 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0900;
-				LastUpgradeCheck = 0900;
+				LastUpgradeCheck = 1010;
 				ORGANIZATIONNAME = "Jonah Ollman";
 				TargetAttributes = {
 					2BA6C1161F8AD3A700ED3C13 = {
 						CreatedOnToolsVersion = 9.0;
+						LastSwiftMigration = 1010;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -205,6 +199,7 @@
 				"${BUILT_PRODUCTS_DIR}/AlamofireObjectMapper/AlamofireObjectMapper.framework",
 				"${BUILT_PRODUCTS_DIR}/CDYelpFusionKit/CDYelpFusionKit.framework",
 				"${BUILT_PRODUCTS_DIR}/Device/Device.framework",
+				"${BUILT_PRODUCTS_DIR}/Mixpanel-swift/Mixpanel.framework",
 				"${BUILT_PRODUCTS_DIR}/ObjectMapper/ObjectMapper.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftSoup/SwiftSoup.framework",
 			);
@@ -214,6 +209,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AlamofireObjectMapper.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CDYelpFusionKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Device.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Mixpanel.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ObjectMapper.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftSoup.framework",
 			);
@@ -238,21 +234,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		FF0946CA4A12DEFFAE875783 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-tacofinder/Pods-tacofinder-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -308,6 +289,7 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -315,6 +297,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
@@ -365,6 +348,7 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -372,6 +356,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
@@ -413,7 +398,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.jonahollman.tacofinder;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
@@ -430,7 +415,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.jonahollman.tacofinder;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
