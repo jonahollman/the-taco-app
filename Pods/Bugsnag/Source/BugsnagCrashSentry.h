@@ -19,6 +19,13 @@
         onCrash:(BSGReportCallback)onCrash;
 
 - (void)reportUserException:(NSString *)reportName
-                     reason:(NSString *)reportMessage;
+                     reason:(NSString *)reportMessage
+          originalException:(NSException *)ex
+               handledState:(NSDictionary *)handledState
+                   appState:(NSDictionary *)appState
+          callbackOverrides:(NSDictionary *)overrides
+                   metadata:(NSDictionary *)metadata
+                     config:(NSDictionary *)config
+               discardDepth:(int)depth;
 
 @end

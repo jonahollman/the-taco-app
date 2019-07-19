@@ -14,7 +14,7 @@ import UIKit
 /// The primary class for integrating Mixpanel with your app.
 open class Mixpanel {
 
-    #if !os(OSX)
+    #if !os(OSX) && !WATCH_OS
     /**
      Initializes an instance of the API with the given project token.
 
@@ -99,13 +99,13 @@ open class Mixpanel {
      - returns: returns the main Mixpanel instance
      */
     open class func mainInstance() -> MixpanelInstance {
-        let instance = MixpanelManager.sharedInstance.getMainInstance()
-        if instance == nil {
-            fatalError("You have to call initialize(token:) before calling the main instance, " +
+        if let instance = MixpanelManager.sharedInstance.getMainInstance() {
+            return instance
+        } else {
+            assert(false, "You have to call initialize(token:) before calling the main instance, " +
                 "or define a new main instance if removing the main one")
+            return Mixpanel.initialize(token: "")
         }
-
-        return instance!
     }
 
     /**
@@ -139,7 +139,7 @@ class MixpanelManager {
         Logger.addLogging(PrintLogging())
     }
 
-    #if !os(OSX)
+    #if !os(OSX) && !WATCH_OS
     func initialize(token apiToken: String,
                     launchOptions: [UIApplication.LaunchOptionsKey : Any]?,
                     flushInterval: Double,

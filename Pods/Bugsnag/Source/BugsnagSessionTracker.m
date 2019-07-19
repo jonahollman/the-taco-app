@@ -18,6 +18,8 @@
  */
 NSTimeInterval const BSGNewSessionBackgroundDuration = 60;
 
+NSString *const BSGSessionUpdateNotification = @"BugsnagSessionChanged";
+
 @interface BugsnagSessionTracker ()
 @property (weak, nonatomic) BugsnagConfiguration *config;
 @property (strong, nonatomic) BugsnagSessionFileStore *sessionStore;
@@ -56,6 +58,38 @@ NSTimeInterval const BSGNewSessionBackgroundDuration = 60;
     [self startNewSessionWithAutoCaptureValue:NO];
 }
 
+- (void)stopSession {
+    [[self currentSession] stop];
+
+    if (self.callback) {
+        self.callback(nil);
+    }
+    [self postUpdateNotice];
+}
+
+- (BOOL)resumeSession {
+    BugsnagSession *session = self.currentSession;
+
+    if (session == nil) {
+        [self startNewSessionWithAutoCaptureValue:NO];
+        return NO;
+    } else {
+        BOOL stopped = session.isStopped;
+        [session resume];
+        [self postUpdateNotice];
+        return stopped;
+    }
+}
+
+- (BugsnagSession *)runningSession {
+    BugsnagSession *session = self.currentSession;
+
+    if (session == nil || session.isStopped) {
+        return nil;
+    }
+    return session;
+}
+
 - (void)startNewSessionIfAutoCaptureEnabled {
     if (self.config.shouldAutoCaptureSessions  && [self.config shouldSendReports]) {
         [self startNewSessionWithAutoCaptureValue:YES];
@@ -67,6 +101,7 @@ NSTimeInterval const BSGNewSessionBackgroundDuration = 60;
         bsg_log_err(@"The session tracking endpoint has not been set. Session tracking is disabled");
         return;
     }
+
     self.currentSession = [[BugsnagSession alloc] initWithId:[[NSUUID UUID] UUIDString]
                                                    startDate:[NSDate date]
                                                         user:self.config.currentUser
@@ -77,7 +112,34 @@ NSTimeInterval const BSGNewSessionBackgroundDuration = 60;
     if (self.callback) {
         self.callback(self.currentSession);
     }
+    [self postUpdateNotice];
+
     [self.apiClient deliverSessionsInStore:self.sessionStore];
+}
+
+- (void)registerExistingSession:(NSString *)sessionId
+                      startedAt:(NSDate *)startedAt
+                           user:(BugsnagUser *)user
+                   handledCount:(NSUInteger)handledCount
+                 unhandledCount:(NSUInteger)unhandledCount {
+    if (sessionId == nil || startedAt == nil) {
+        self.currentSession = nil;
+    } else {
+        self.currentSession = [[BugsnagSession alloc] initWithId:sessionId
+                                                       startDate:startedAt
+                                                            user:user
+                                                    handledCount:handledCount
+                                                  unhandledCount:unhandledCount];
+    }
+    if (self.callback) {
+        self.callback(self.currentSession);
+    }
+    [self postUpdateNotice];
+}
+
+- (void)postUpdateNotice {
+    [[NSNotificationCenter defaultCenter] postNotificationName:BSGSessionUpdateNotification
+                                                        object:[self.runningSession toDictionary]];
 }
 
 #pragma mark - Handling events
@@ -95,15 +157,34 @@ NSTimeInterval const BSGNewSessionBackgroundDuration = 60;
 }
 
 - (void)handleHandledErrorEvent {
-    if (self.currentSession == nil) {
+    BugsnagSession *session = [self runningSession];
+
+    if (session == nil) {
         return;
     }
 
-    @synchronized (self.currentSession) {
-        self.currentSession.handledCount++;
-        if (self.callback && (self.config.shouldAutoCaptureSessions || !self.currentSession.autoCaptured)) {
-            self.callback(self.currentSession);
+    @synchronized (session) {
+        session.handledCount++;
+        if (self.callback) {
+            self.callback(session);
         }
+        [self postUpdateNotice];
+    }
+}
+
+- (void)handleUnhandledErrorEvent {
+    BugsnagSession *session = [self runningSession];
+
+    if (session == nil) {
+        return;
+    }
+
+    @synchronized (session) {
+        session.unhandledCount++;
+        if (self.callback) {
+            self.callback(session);
+        }
+        [self postUpdateNotice];
     }
 }
 

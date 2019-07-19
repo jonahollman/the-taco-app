@@ -74,6 +74,10 @@ class Flush: AppLifecycle {
         flushQueue(type: .people, queue: &peopleQueue)
     }
 
+    func flushGroupsQueue(_ groupsQueue: inout Queue) {
+        flushQueue(type: .groups, queue: &groupsQueue)
+    }
+
     func flushQueue(type: FlushType, queue: inout Queue) {
         if flushRequest.requestNotAllowed() {
             return
@@ -84,12 +88,16 @@ class Flush: AppLifecycle {
     func startFlushTimer() {
         stopFlushTimer()
         if flushInterval > 0 {
-            DispatchQueue.main.async() {
+            DispatchQueue.main.async() { [weak self] in
+                guard let self = self else {
+                    return
+                }
+
                 self.timer = Timer.scheduledTimer(timeInterval: self.flushInterval,
-                                                  target: self,
-                                                  selector: #selector(self.flushSelector),
-                                                  userInfo: nil,
-                                                  repeats: true)
+                                                     target: self,
+                                                     selector: #selector(self.flushSelector),
+                                                     userInfo: nil,
+                                                     repeats: true)
             }
         }
     }
@@ -100,9 +108,9 @@ class Flush: AppLifecycle {
 
     func stopFlushTimer() {
         if let timer = timer {
-            DispatchQueue.main.async() {
+            DispatchQueue.main.async() { [weak self, timer] in
                 timer.invalidate()
-                self.timer = nil
+                self?.timer = nil
             }
         }
     }
@@ -125,9 +133,10 @@ class Flush: AppLifecycle {
                 flushRequest.sendRequest(requestData,
                                          type: type,
                                          useIP: useIPAddressForGeoLocation,
-                                         completion: { success in
+                                         completion: { [weak self, semaphore, range] success in
                                             #if os(iOS)
                                                 if !MixpanelInstance.isiOSAppExtension() {
+                                                    guard let self = self else { return }
                                                     self.delegate?.updateNetworkActivityIndicator(false)
                                                 }
                                             #endif // os(iOS)

@@ -207,7 +207,7 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         if self.isFavorite {
             self.favoritesIcon.image = UIImage(named: "heart-outline-plus")
             self.isFavorite = false
-            let index = self.favorites.index(of: self.tacoName.text!)
+            let index = self.favorites.firstIndex(of: self.tacoName.text!)
             self.favorites.remove(at: index!)
             self.favoriteLats.remove(at: index!)
             self.favoriteLongs.remove(at: index!)

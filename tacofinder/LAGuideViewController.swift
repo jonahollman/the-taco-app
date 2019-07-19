@@ -107,7 +107,7 @@ class LAGuideViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     @objc func addToFavorites(sender: UIButton) {
         if favorites.contains(top50Dictionary[sender.tag]["name"]!) {
-            let index = favorites.index(of: top50Dictionary[sender.tag]["name"]!)
+            let index = favorites.firstIndex(of: top50Dictionary[sender.tag]["name"]!)
             favorites.remove(at: index!)
             favoriteLats.remove(at: index!)
             favoriteLongs.remove(at: index!)

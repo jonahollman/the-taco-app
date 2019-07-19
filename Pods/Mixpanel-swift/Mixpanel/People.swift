@@ -43,7 +43,9 @@ open class People {
         let epochMilliseconds = round(Date().timeIntervalSince1970 * 1000)
         let ignoreTimeCopy = ignoreTime
 
-        serialQueue.async() {
+        serialQueue.async() { [weak self, action, properties] in
+            guard let self = self else { return }
+
             var r = InternalProperties()
             var p = InternalProperties()
             r["$token"] = self.apiToken
@@ -70,9 +72,16 @@ open class People {
                r["$device_id"] = anonymousId
             }
 
+            if let userId = Mixpanel.mainInstance().userId {
+                r["$user_id"] = userId
+            }
+
+            if let hadPersistedDistinctId = Mixpanel.mainInstance().hadPersistedDistinctId {
+                r["$had_persisted_distinct_id"] = hadPersistedDistinctId
+            }
+
             if let distinctId = self.distinctId {
                 r["$distinct_id"] = distinctId
-                r["$user_id"] = distinctId
                 self.addPeopleObject(r)
             } else {
                 self.lock.write {
@@ -83,7 +92,7 @@ open class People {
                 }
 
             }
-            self.lock.read{
+            self.lock.read {
                 Persistence.archivePeople(self.flushPeopleQueue + self.peopleQueue, token: self.apiToken)
             }
         }
@@ -94,7 +103,7 @@ open class People {
     }
 
     func addPeopleObject(_ r: InternalProperties) {
-        self.lock.write {
+        lock.write {
             peopleQueue.append(r)
             if peopleQueue.count > QueueConstants.queueSize {
                 peopleQueue.remove(at: 0)
@@ -134,6 +143,16 @@ open class People {
     open func addPushDeviceToken(_ deviceToken: Data) {
         let properties = ["$ios_devices": [deviceTokenDataToString(deviceToken)]]
         addPeopleRecordToQueueWithAction("$union", properties: properties)
+    }
+
+    /**
+     Unregister the given device to receive push notifications.
+
+     This will unset all of the push tokens saved to this people profile. This is useful
+     in conjunction with a call to `reset`, or when a user is logging out.
+     */
+    open func removeAllPushDeviceTokens() {
+        unset(properties: ["$ios_devices"])
     }
 
     /**

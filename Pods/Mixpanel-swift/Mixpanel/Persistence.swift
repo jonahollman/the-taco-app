@@ -15,6 +15,7 @@ struct ArchivedProperties {
     let anonymousId: String?
     let userId: String?
     let alias: String?
+    let hadPersistedDistinctId: Bool?
     let peopleDistinctId: String?
     let peopleUnidentifiedQueue: Queue
     #if DECIDE
@@ -28,6 +29,7 @@ class Persistence {
     enum ArchiveType: String {
         case events
         case people
+        case groups
         case properties
         case codelessBindings
         case variants
@@ -58,12 +60,14 @@ class Persistence {
     #if DECIDE
     class func archive(eventsQueue: Queue,
                        peopleQueue: Queue,
+                       groupsQueue: Queue,
                        properties: ArchivedProperties,
                        codelessBindings: Set<CodelessBinding>,
                        variants: Set<Variant>,
                        token: String) {
         archiveEvents(eventsQueue, token: token)
         archivePeople(peopleQueue, token: token)
+        archiveGroups(groupsQueue, token: token)
         archiveProperties(properties, token: token)
         archiveVariants(variants, token: token)
         archiveCodelessBindings(codelessBindings, token: token)
@@ -71,10 +75,12 @@ class Persistence {
     #else
     class func archive(eventsQueue: Queue,
                        peopleQueue: Queue,
+                       groupsQueue: Queue,
                        properties: ArchivedProperties,
                        token: String) {
         archiveEvents(eventsQueue, token: token)
         archivePeople(peopleQueue, token: token)
+        archiveGroups(groupsQueue, token: token)
         archiveProperties(properties, token: token)
     }
     #endif // DECIDE
@@ -91,6 +97,12 @@ class Persistence {
         objc_sync_exit(self)
     }
 
+    class func archiveGroups(_ groupsQueue: Queue, token: String) {
+        objc_sync_enter(self)
+        archiveToFile(.groups, object: groupsQueue, token: token)
+        objc_sync_exit(self)
+    }
+
     class func archiveOptOutStatus(_ optOutStatus: Bool, token: String) {
         objc_sync_enter(self)
         archiveToFile(.optOutStatus, object: optOutStatus, token: token)
@@ -104,6 +116,7 @@ class Persistence {
         p["anonymousId"] = properties.anonymousId
         p["userId"] = properties.userId
         p["alias"] = properties.alias
+        p["hadPersistedDistinctId"] = properties.hadPersistedDistinctId
         p["superProperties"] = properties.superProperties
         p["peopleDistinctId"] = properties.peopleDistinctId
         p["peopleUnidentifiedQueue"] = properties.peopleUnidentifiedQueue
@@ -137,10 +150,16 @@ class Persistence {
             return
         }
 
-        if !NSKeyedArchiver.archiveRootObject(object, toFile: path) {
-            Logger.error(message: "failed to archive \(type.rawValue)")
+        ExceptionWrapper.try({ [cObject = object, cPath = path, cType = type] in
+            if !NSKeyedArchiver.archiveRootObject(cObject, toFile: cPath) {
+                Logger.error(message: "failed to archive \(cType.rawValue)")
+                return
+            }
+        }, catch: { [cType = type] (error) in
+            Logger.error(message: "failed to archive \(cType.rawValue) due to an uncaught exception")
             return
-        }
+        }, finally: {})
+        
         addSkipBackupAttributeToItem(at: path)
     }
 
@@ -158,21 +177,24 @@ class Persistence {
     #if DECIDE
     class func unarchive(token: String) -> (eventsQueue: Queue,
                                             peopleQueue: Queue,
+                                            groupsQueue: Queue,
                                             superProperties: InternalProperties,
                                             timedEvents: InternalProperties,
                                             distinctId: String,
                                             anonymousId: String?,
                                             userId: String?,
                                             alias: String?,
+                                            hadPersistedDistinctId: Bool?,
                                             peopleDistinctId: String?,
                                             peopleUnidentifiedQueue: Queue,
                                             shownNotifications: Set<Int>,
                                             codelessBindings: Set<CodelessBinding>,
                                             variants: Set<Variant>,
-                                            optOutStatus: Bool,
+                                            optOutStatus: Bool?,
                                             automaticEventsEnabled: Bool?) {
         let eventsQueue = unarchiveEvents(token: token)
         let peopleQueue = unarchivePeople(token: token)
+        let groupsQueue = unarchiveGroups(token: token)
         let codelessBindings = unarchiveCodelessBindings(token: token)
         let variants = unarchiveVariants(token: token)
         let optOutStatus = unarchiveOptOutStatus(token: token)
@@ -183,6 +205,7 @@ class Persistence {
             anonymousId,
             userId,
             alias,
+            hadPersistedDistinctId,
             peopleDistinctId,
             peopleUnidentifiedQueue,
             shownNotifications,
@@ -190,12 +213,14 @@ class Persistence {
 
         return (eventsQueue,
                 peopleQueue,
+                groupsQueue,
                 superProperties,
                 timedEvents,
                 distinctId,
                 anonymousId,
                 userId,
                 alias,
+                hadPersistedDistinctId,
                 peopleDistinctId,
                 peopleUnidentifiedQueue,
                 shownNotifications,
@@ -207,16 +232,19 @@ class Persistence {
     #else
     class func unarchive(token: String) -> (eventsQueue: Queue,
                                             peopleQueue: Queue,
+                                            groupsQueue: Queue,
                                             superProperties: InternalProperties,
                                             timedEvents: InternalProperties,
                                             distinctId: String,
                                             anonymousId: String?,
                                             userId: String?,
                                             alias: String?,
+                                            hadPersistedDistinctId: Bool?,
                                             peopleDistinctId: String?,
                                             peopleUnidentifiedQueue: Queue) {
             let eventsQueue = unarchiveEvents(token: token)
             let peopleQueue = unarchivePeople(token: token)
+            let groupsQueue = unarchiveGroups(token: token)
 
             let (superProperties,
                 timedEvents,
@@ -224,18 +252,21 @@ class Persistence {
                 anonymousId,
                 userId,
                 alias,
+                hadPersistedDistinctId,
                 peopleDistinctId,
                 peopleUnidentifiedQueue,
                 _) = unarchiveProperties(token: token)
 
             return (eventsQueue,
                     peopleQueue,
+                    groupsQueue,
                     superProperties,
                     timedEvents,
                     distinctId,
                     anonymousId,
                     userId,
                     alias,
+                    hadPersistedDistinctId,
                     peopleDistinctId,
                     peopleUnidentifiedQueue)
     }
@@ -243,13 +274,13 @@ class Persistence {
 
     class private func unarchiveWithFilePath(_ filePath: String) -> Any? {
         var unarchivedData: Any? = nil
-        ExceptionWrapper.try({
+        ExceptionWrapper.try({ [filePath] in
             unarchivedData = NSKeyedUnarchiver.unarchiveObject(withFile: filePath)
             if unarchivedData == nil {
                 Logger.info(message: "Unable to read file at path: \(filePath)")
                 removeArchivedFile(atPath: filePath)
             }
-        }, catch: { (error) in
+        }, catch: { [filePath] (error) in
             removeArchivedFile(atPath: filePath)
             Logger.info(message: "Unable to read file at path: \(filePath), error: \(String(describing: error))")
         }, finally: {})
@@ -274,9 +305,13 @@ class Persistence {
         return data as? Queue ?? []
     }
 
-    class private func unarchiveOptOutStatus(token: String) -> Bool {
-        let data = unarchiveWithType(.optOutStatus, token: token) as? Bool
-        return data ?? false
+    class private func unarchiveGroups(token: String) -> Queue {
+        let data = unarchiveWithType(.groups, token: token)
+        return data as? Queue ?? []
+    }
+
+    class private func unarchiveOptOutStatus(token: String) -> Bool? {
+        return unarchiveWithType(.optOutStatus, token: token) as? Bool
     }
 
     #if DECIDE
@@ -286,6 +321,7 @@ class Persistence {
                                                               String?,
                                                               String?,
                                                               String?,
+                                                              Bool?,
                                                               String?,
                                                               Queue,
                                                               Set<Int>,
@@ -297,6 +333,7 @@ class Persistence {
              anonymousId,
              userId,
              alias,
+             hadPersistedDistinctId,
              peopleDistinctId,
              peopleUnidentifiedQueue,
              automaticEventsEnabled) = unarchivePropertiesHelper(token: token)
@@ -309,6 +346,7 @@ class Persistence {
                 anonymousId,
                 userId,
                 alias,
+                hadPersistedDistinctId,
                 peopleDistinctId,
                 peopleUnidentifiedQueue,
                 shownNotifications,
@@ -321,6 +359,7 @@ class Persistence {
         String?,
         String?,
         String?,
+        Bool?,
         String?,
         Queue,
         Bool?) {
@@ -334,6 +373,7 @@ class Persistence {
         String?,
         String?,
         String?,
+        Bool?,
         String?,
         Queue,
         Bool?) {
@@ -350,6 +390,8 @@ class Persistence {
                 properties?["userId"] as? String ?? nil
             var alias =
                 properties?["alias"] as? String ?? nil
+            var hadPersistedDistinctId =
+                properties?["hadPersistedDistinctId"] as? Bool ?? nil
             var peopleDistinctId =
                 properties?["peopleDistinctId"] as? String ?? nil
             let peopleUnidentifiedQueue =
@@ -358,7 +400,7 @@ class Persistence {
                 properties?["automaticEvents"] as? Bool ?? nil
 
             if properties == nil {
-                (distinctId, peopleDistinctId, anonymousId, userId, alias) = restoreIdentity(token: token)
+                (distinctId, peopleDistinctId, anonymousId, userId, alias, hadPersistedDistinctId) = restoreIdentity(token: token)
             }
 
             return (superProperties,
@@ -367,6 +409,7 @@ class Persistence {
                     anonymousId,
                     userId,
                     alias,
+                    hadPersistedDistinctId,
                     peopleDistinctId,
                     peopleUnidentifiedQueue,
                     automaticEventsEnabled)
@@ -399,7 +442,7 @@ class Persistence {
         return unarchivedData
     }
 
-    class func storeIdentity(token: String, distinctID: String, peopleDistinctID: String?, anonymousID: String?, userID: String?, alias: String?) {
+    class func storeIdentity(token: String, distinctID: String, peopleDistinctID: String?, anonymousID: String?, userID: String?, alias: String?, hadPersistedDistinctId: Bool?) {
         guard let defaults = UserDefaults(suiteName: "Mixpanel") else {
             return
         }
@@ -409,19 +452,21 @@ class Persistence {
         defaults.set(anonymousID, forKey: prefix + "MPAnonymousId")
         defaults.set(userID, forKey: prefix + "MPUserId")
         defaults.set(alias, forKey: prefix + "MPAlias")
+        defaults.set(hadPersistedDistinctId, forKey: prefix + "MPHadPersistedDistinctId")
         defaults.synchronize()
     }
 
-    class func restoreIdentity(token: String) -> (String, String?, String?, String?, String?) {
+    class func restoreIdentity(token: String) -> (String, String?, String?, String?, String?, Bool?) {
         guard let defaults = UserDefaults(suiteName: "Mixpanel") else {
-            return ("", nil, nil, nil, nil)
+            return ("", nil, nil, nil, nil, nil)
         }
         let prefix = "mixpanel-\(token)-"
         return (defaults.string(forKey: prefix + "MPDistinctID") ?? "",
                 defaults.string(forKey: prefix + "MPPeopleDistinctID"),
                 defaults.string(forKey: prefix + "MPAnonymousId"),
                 defaults.string(forKey: prefix + "MPUserId"),
-                defaults.string(forKey: prefix + "MPAlias"))
+                defaults.string(forKey: prefix + "MPAlias"),
+                defaults.bool(forKey: prefix + "MPHadPersistedDistinctId"))
     }
 
     class func deleteMPUserDefaultsData(token: String) {
@@ -434,6 +479,7 @@ class Persistence {
         defaults.removeObject(forKey: prefix + "MPAnonymousId")
         defaults.removeObject(forKey: prefix + "MPUserId")
         defaults.removeObject(forKey: prefix + "MPAlias")
+        defaults.removeObject(forKey: prefix + "MPHadPersistedDistinctId")
         defaults.synchronize()
     }
 

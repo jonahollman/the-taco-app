@@ -42,13 +42,24 @@ NSUInteger const BSG_MAX_STORED_REPORTS = 12;
 }
 
 - (void)reportUserException:(NSString *)reportName
-                     reason:(NSString *)reportMessage {
+                     reason:(NSString *)reportMessage
+          originalException:(NSException *)ex
+               handledState:(NSDictionary *)handledState
+                   appState:(NSDictionary *)appState
+          callbackOverrides:(NSDictionary *)overrides
+                   metadata:(NSDictionary *)metadata
+                     config:(NSDictionary *)config
+               discardDepth:(int)depth {
 
     [[BSG_KSCrash sharedInstance] reportUserException:reportName
                                                reason:reportMessage
-                                             language:NULL
-                                           lineOfCode:@""
-                                           stackTrace:@[]
+                                    originalException:ex
+                                         handledState:handledState
+                                             appState:appState
+                                    callbackOverrides:overrides
+                                             metadata:metadata
+                                               config:config
+                                         discardDepth:depth
                                      terminateProgram:NO];
 }
 

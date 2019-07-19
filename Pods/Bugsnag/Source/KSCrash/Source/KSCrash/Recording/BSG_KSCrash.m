@@ -99,7 +99,6 @@
 @synthesize searchThreadNames = _searchThreadNames;
 @synthesize searchQueueNames = _searchQueueNames;
 @synthesize introspectMemory = _introspectMemory;
-@synthesize catchZombies = _catchZombies;
 @synthesize doNotIntrospectClasses = _doNotIntrospectClasses;
 @synthesize maxStoredReports = _maxStoredReports;
 @synthesize suspendThreadsForUserReported = _suspendThreadsForUserReported;
@@ -155,7 +154,6 @@ IMPLEMENT_EXCLUSIVE_SHARED_INSTANCE(BSG_KSCrash)
         self.searchThreadNames = NO;
         self.searchQueueNames = NO;
         self.introspectMemory = YES;
-        self.catchZombies = NO;
         self.maxStoredReports = 5;
 
         self.suspendThreadsForUserReported = YES;
@@ -220,11 +218,6 @@ IMPLEMENT_EXCLUSIVE_SHARED_INSTANCE(BSG_KSCrash)
 - (void)setIntrospectMemory:(bool)introspectMemory {
     _introspectMemory = introspectMemory;
     bsg_kscrash_setIntrospectMemory(introspectMemory);
-}
-
-- (void)setCatchZombies:(bool)catchZombies {
-    _catchZombies = catchZombies;
-    bsg_kscrash_setCatchZombies(catchZombies);
 }
 
 - (void)setSuspendThreadsForUserReported:(BOOL)suspendThreadsForUserReported {
@@ -320,12 +313,12 @@ IMPLEMENT_EXCLUSIVE_SHARED_INSTANCE(BSG_KSCrash)
     (BSG_KSCrashReportFilterCompletion)onCompletion {
     [self.crashReportStore pruneFilesLeaving:self.maxStoredReports];
 
-    NSArray *reports = [self allReports];
+    NSDictionary *reports = [self allReportsByFilename];
 
     BSG_KSLOG_INFO(@"Sending %d crash reports", [reports count]);
 
     [self sendReports:reports
-         onCompletion:^(NSArray *filteredReports, BOOL completed,
+         onCompletion:^(NSUInteger sentReportCount, BOOL completed,
                         NSError *error) {
            BSG_KSLOG_DEBUG(@"Process finished with completion: %d", completed);
            if (error != nil) {
@@ -336,7 +329,7 @@ IMPLEMENT_EXCLUSIVE_SHARED_INSTANCE(BSG_KSCrash)
                self.deleteBehaviorAfterSendAll == BSG_KSCDeleteAlways) {
                [self deleteAllReports];
            }
-           bsg_kscrash_i_callCompletion(onCompletion, filteredReports,
+           bsg_kscrash_i_callCompletion(onCompletion, sentReportCount,
                                         completed, error);
          }];
 }
@@ -347,30 +340,35 @@ IMPLEMENT_EXCLUSIVE_SHARED_INSTANCE(BSG_KSCrash)
 
 - (void)reportUserException:(NSString *)name
                      reason:(NSString *)reason
-                   language:(NSString *)language
-                 lineOfCode:(NSString *)lineOfCode
-                 stackTrace:(NSArray *)stackTrace
+          originalException:(NSException *)exception
+               handledState:(NSDictionary *)handledState
+                   appState:(NSDictionary *)appState
+          callbackOverrides:(NSDictionary *)overrides
+                   metadata:(NSDictionary *)metadata
+                     config:(NSDictionary *)config
+               discardDepth:(int)depth
            terminateProgram:(BOOL)terminateProgram {
     const char *cName = [name cStringUsingEncoding:NSUTF8StringEncoding];
     const char *cReason = [reason cStringUsingEncoding:NSUTF8StringEncoding];
-    const char *cLanguage =
-        [language cStringUsingEncoding:NSUTF8StringEncoding];
-    const char *cLineOfCode =
-        [lineOfCode cStringUsingEncoding:NSUTF8StringEncoding];
-    NSError *error = nil;
-    NSData *jsonData =
-        [BSG_KSJSONCodec encode:stackTrace options:0 error:&error];
-    if (jsonData == nil || error != nil) {
-        BSG_KSLOG_ERROR(@"Error encoding stack trace to JSON: %@", error);
-        // Don't return, since we can still record other useful information.
+    NSArray *addresses = [exception callStackReturnAddresses];
+    NSUInteger numFrames = [addresses count];
+    uintptr_t *callstack = malloc(numFrames * sizeof(*callstack));
+    for (NSUInteger i = 0; i < numFrames; i++) {
+        callstack[i] = [addresses[i] unsignedLongValue];
     }
-    NSString *jsonString =
-        [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-    const char *cStackTrace =
-        [jsonString cStringUsingEncoding:NSUTF8StringEncoding];
-
-    bsg_kscrash_reportUserException(cName, cReason, cLanguage, cLineOfCode,
-                                    cStackTrace, terminateProgram);
+    if (numFrames > 0) {
+        depth = 0; // reset depth if the stack does not need to be generated
+    }
+    bsg_kscrash_reportUserException(cName, cReason,
+                                    callstack, numFrames,
+                                    [handledState[@"currentSeverity"] UTF8String],
+                                    [self encodeAsJSONString:handledState],
+                                    [self encodeAsJSONString:overrides],
+                                    [self encodeAsJSONString:metadata],
+                                    [self encodeAsJSONString:appState],
+                                    [self encodeAsJSONString:config],
+                                    depth,
+                                    terminateProgram);
 
     // If bsg_kscrash_reportUserException() returns, we did not terminate.
     // Set up IDs and paths for the next crash.
@@ -411,16 +409,16 @@ BSG_SYNTHESIZE_CRASH_STATE_PROPERTY(BOOL, crashedLastLaunch)
     return self.crashReportStore.path;
 }
 
-- (void)sendReports:(NSArray *)reports
+- (void)sendReports:(NSDictionary <NSString *, NSDictionary *> *)reports
        onCompletion:(BSG_KSCrashReportFilterCompletion)onCompletion {
     if ([reports count] == 0) {
-        bsg_kscrash_i_callCompletion(onCompletion, reports, YES, nil);
+        bsg_kscrash_i_callCompletion(onCompletion, 0, YES, nil);
         return;
     }
 
     if (self.sink == nil) {
         bsg_kscrash_i_callCompletion(
-            onCompletion, reports, NO,
+            onCompletion, 0, NO,
             [NSError bsg_errorWithDomain:[[self class] description]
                                     code:0
                              description:@"No sink set. Crash reports not sent."]);
@@ -428,15 +426,19 @@ BSG_SYNTHESIZE_CRASH_STATE_PROPERTY(BOOL, crashedLastLaunch)
     }
 
     [self.sink filterReports:reports
-                onCompletion:^(NSArray *filteredReports, BOOL completed,
+                onCompletion:^(NSUInteger sentReportCount, BOOL completed,
                                NSError *error) {
-                  bsg_kscrash_i_callCompletion(onCompletion, filteredReports,
+                  bsg_kscrash_i_callCompletion(onCompletion, sentReportCount,
                                                completed, error);
                 }];
 }
 
 - (NSArray *)allReports {
     return [self.crashReportStore allFiles];
+}
+
+- (NSDictionary <NSString *, NSDictionary *> *)allReportsByFilename {
+    return [self.crashReportStore allFilesByName];
 }
 
 - (BOOL)redirectConsoleLogsToFile:(NSString *)fullPath
@@ -472,6 +474,19 @@ BSG_SYNTHESIZE_CRASH_STATE_PROPERTY(BOOL, crashedLastLaunch)
     NSMutableData *mutable = [NSMutableData dataWithData:data];
     [mutable appendBytes:"\0" length:1];
     return mutable;
+}
+
+- (const char *)encodeAsJSONString:(id)object {
+    NSError *error = nil;
+    NSData *jsonData = [BSG_KSJSONCodec encode:object options:0 error:&error];
+    if (jsonData == nil || error != nil) {
+        BSG_KSLOG_ERROR(@"Error encoding object to JSON: %@", error);
+        // we can still record other useful information from the report
+        return NULL;
+    }
+    NSString *jsonString =
+    [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+    return [jsonString cStringUsingEncoding:NSUTF8StringEncoding];
 }
 
 // ============================================================================

@@ -47,15 +47,28 @@ void bsg_kscrashsentry_uninstallUserExceptionHandler(void) {
     bsg_g_context = NULL;
 }
 
-void bsg_kscrashsentry_reportUserException(const char *name, const char *reason,
-                                           const char *language,
-                                           const char *lineOfCode,
-                                           const char *stackTrace,
+
+void bsg_kscrashsentry_reportUserException(const char *name,
+                                           const char *reason,
+                                           uintptr_t *stackAddresses,
+                                           unsigned long stackLength,
+                                           const char *severity,
+                                           const char *handledState,
+                                           const char *overrides,
+                                           const char *metadata,
+                                           const char *appState,
+                                           const char *config,
+                                           int discardDepth,
                                            bool terminateProgram) {
     if (bsg_g_context == NULL) {
         BSG_KSLOG_WARN("User-reported exception sentry is not installed. "
                        "Exception has not been recorded.");
     } else {
+        // We want these variables to persist until the onCrash
+        // call later
+        int callstackCount = 100;
+        uintptr_t callstack[callstackCount];
+        
         bsg_kscrashsentry_beginHandlingCrash(bsg_g_context);
 
         if (bsg_g_context->suspendThreadsForUserReported) {
@@ -63,14 +76,20 @@ void bsg_kscrashsentry_reportUserException(const char *name, const char *reason,
             bsg_kscrashsentry_suspendThreads();
         }
 
-        BSG_KSLOG_DEBUG("Fetching call stack.");
-        int callstackCount = 100;
-        uintptr_t callstack[callstackCount];
-        callstackCount = backtrace((void **)callstack, callstackCount);
-        if (callstackCount <= 0) {
-            BSG_KSLOG_ERROR("backtrace() returned call stack length of %d",
-                            callstackCount);
-            callstackCount = 0;
+        if (stackAddresses != NULL && stackLength > 0) {
+            bsg_g_context->stackTrace = stackAddresses;
+            bsg_g_context->stackTraceLength = (int)stackLength;
+        } else {
+            BSG_KSLOG_DEBUG("Fetching call stack.");
+            callstackCount = backtrace((void **)callstack, callstackCount);
+            if (callstackCount <= 0) {
+                BSG_KSLOG_ERROR("backtrace() returned call stack length of %d",
+                                callstackCount);
+                callstackCount = 0;
+            }
+            BSG_KSLOG_DEBUG("Filling out stack context entries.");
+            bsg_g_context->stackTrace = callstack;
+            bsg_g_context->stackTraceLength = callstackCount;
         }
 
         BSG_KSLOG_DEBUG("Filling out context.");
@@ -78,15 +97,20 @@ void bsg_kscrashsentry_reportUserException(const char *name, const char *reason,
         bsg_g_context->offendingThread = bsg_ksmachthread_self();
         bsg_g_context->registersAreValid = false;
         bsg_g_context->crashReason = reason;
-        bsg_g_context->stackTrace = callstack;
-        bsg_g_context->stackTraceLength = callstackCount;
         bsg_g_context->userException.name = name;
-        bsg_g_context->userException.language = language;
-        bsg_g_context->userException.lineOfCode = lineOfCode;
-        bsg_g_context->userException.customStackTrace = stackTrace;
+        bsg_g_context->userException.handledState = handledState;
+        bsg_g_context->userException.overrides = overrides;
+        bsg_g_context->userException.config = config;
+        bsg_g_context->userException.discardDepth = discardDepth;
+        bsg_g_context->userException.metadata = metadata;
+        bsg_g_context->userException.state = appState;
 
         BSG_KSLOG_DEBUG("Calling main crash handler.");
-        bsg_g_context->onCrash();
+        char errorClass[21];
+        strncpy(errorClass, bsg_g_context->userException.name, sizeof(errorClass));
+        // default to 'w'arning level severity
+        char severityChar = severity != NULL && strlen(severity) > 0 ? severity[0] : 'w';
+        bsg_g_context->onCrash(severityChar, errorClass);
 
         if (terminateProgram) {
             bsg_kscrashsentry_uninstall(BSG_KSCrashTypeAll);
