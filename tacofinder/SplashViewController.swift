@@ -28,35 +28,24 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
     var token = UserDefaults.standard.string(forKey: "token")
     var latitude = CLLocationDegrees()
     var longitude = CLLocationDegrees()
-//    var checkLocationTimer = Timer()
-    
     var activityIndicator = UIActivityIndicatorView()
     var strLabel = UILabel()
-    
     let effectView = UIVisualEffectView(effect: UIBlurEffect(style: .dark))
-    
-    var tacoResults = [CDYelpBusiness]()
+    var tacoResults: [CDYelpBusiness] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
         noLocationPopUp.isHidden = true
         introAnimation()
-//        checkForLocationPermission()
         setupUI()
-        
     }
     
     override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
         checkForCity()
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
     func introAnimation() {
-        
         tacoButtonOutlet.alpha = 0
         losAngelesGuideButton.alpha = 0
         losAngelesGuideButton.isHidden = true
@@ -66,41 +55,32 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
         
         UIView.animate(withDuration: 2.1, animations: {
             self.tacoButtonOutlet.alpha = 1
-        }, completion: { (true) in
-//            self.checkForLocationPermission()
         })
         
         UIView.animate(withDuration: 1.1, delay: 0.5, usingSpringWithDamping: 0.5, initialSpringVelocity: 3.1, options: [], animations: {
             self.tacoBottom.transform = CGAffineTransform.identity
-        }) { (true) in
-        }
+        })
         
         UIView.animate(withDuration: 1.3, delay: 0.7, usingSpringWithDamping: 0.35, initialSpringVelocity: 3.2, options: [], animations: {
             self.tacoTop.transform = CGAffineTransform.identity
-        }) { (true) in
-        }
+        })
         
     }
     
     @objc func checkForLocationPermission() {
-        
-        locationManager.requestWhenInUseAuthorization()
-        
         if CLLocationManager.locationServicesEnabled() {
             switch CLLocationManager.authorizationStatus() {
             case .notDetermined, .restricted, .denied:
-                self.showNoLocationPopUp()
+                locationManager.requestWhenInUseAuthorization()
+                showNoLocationPopUp()
             case .authorizedAlways, .authorizedWhenInUse:
                 locationManager.startUpdatingLocation()
-//                self.checkLocationTimer.invalidate()
-                if !self.noLocationPopUp.isHidden {
-                    self.dismissNoLocationPopUp()
+                if !noLocationPopUp.isHidden {
+                    dismissNoLocationPopUp()
                 }
                 checkForCity()
             }
-            
         }
-        
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
@@ -110,7 +90,7 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
     func setupUI() {
         
         if Device.size() == .screen4Inch {
-            losAngelesGuideButton.titleLabel?.font = UIFont.avenirMediumFontOfSize(size: 18)
+            losAngelesGuideButton.titleLabel?.font = .avenirMediumFontOfSize(size: 18)
         }
         
         losAngelesGuideButton.layer.cornerRadius = losAngelesGuideButton.layer.frame.height / 2
@@ -122,7 +102,7 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
         
         if CLLocationManager.locationServicesEnabled(), CLLocationManager.authorizationStatus() == .authorizedWhenInUse {
             locationManager.startUpdatingLocation()
-            if (locationManager.location?.coordinate.latitude) != nil {
+            if locationManager.location?.coordinate.latitude != nil {
                 latitude = (locationManager.location?.coordinate.latitude)!
                 longitude = (locationManager.location?.coordinate.longitude)!
                 let currentCoordinates = CLLocation(latitude: latitude, longitude: longitude)
@@ -147,9 +127,7 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
             self.tacoBottom.transform = CGAffineTransform(translationX: 0, y: -70)
             self.losAngelesGuideButton.isHidden = false
             self.losAngelesGuideButton.alpha = 1.0
-        }) { (true) in
-            return
-        }
+        })
     }
     
     func showNoLocationPopUp() {
@@ -160,14 +138,11 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
         noLocationPopUp.target(forAction: #selector(dismissNoLocationPopUp), withSender: self)
         UIView.animate(withDuration: 0.2, animations: {
             self.noLocationPopUp.transform = CGAffineTransform(scaleX: 1.1, y: 1.1)
-        }) { (true) in
+        }) { _ in
             UIView.animate(withDuration: 0.2, animations: {
                 self.noLocationPopUp.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
-            }, completion: nil)
+            })
         }
-        
-//        checkLocationTimer = Timer.scheduledTimer(timeInterval: 2.0, target: self, selector: #selector(self.checkForLocationPermission), userInfo: nil, repeats: true)
-        
     }
     
     @IBAction func goToSettings(_ sender: Any) {
@@ -177,16 +152,14 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
         UIApplication.shared.open(settingsUrl!, completionHandler: { (success) in
             print("Settings opened")
         })
-        
     }
     
     @objc func dismissNoLocationPopUp() {
         UIView.animate(withDuration: 0.3, animations: {
             self.noLocationPopUp.alpha = 0
-        }) { (true) in
+        }) { _ in
             self.noLocationPopUp.isHidden = true
             self.noLocationPopUp.alpha = 1
-//            self.checkLocationTimer.invalidate()
         }
     }
     
@@ -205,8 +178,8 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
         
         strLabel = UILabel(frame: CGRect(x: activityIndicator.frame.maxX + 5, y: view.frame.midY - 23, width: 200, height: 46))
         strLabel.text = "Finding tacos near you"
-        strLabel.font = UIFont.avenirMediumFontOfSize(size: 17)
-        strLabel.textColor = UIColor.white
+        strLabel.font = .avenirMediumFontOfSize(size: 17)
+        strLabel.textColor = .white
         
         view.addSubview(effectView)
         view.addSubview(activityIndicator)
@@ -225,13 +198,10 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
                 self.dismissNoLocationPopUp()
                 Mixpanel.mainInstance().track(event: "Tapped for Tacos")
                 searchForTacos()
-                
             }
-            
         } else {
             showNoLocationPopUp()
         }
-        
     }
     
     @IBAction func closePopUp(_ sender: Any) {
@@ -239,13 +209,12 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
     }
     
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-//        checkForLocationPermission()
         print("Location status updated")
     }
     
     func searchForTacos() {
         
-        appDelegate.apiClient.searchBusinesses(byTerm: "tacos", location: nil, latitude: self.latitude, longitude: self.longitude, radius: nil, categories: nil, locale: nil, limit: nil, offset: nil, sortBy: CDYelpBusinessSortType.distance, priceTiers: nil, openNow: true, openAt: nil, attributes: nil) { (response) in
+        appDelegate.apiClient.searchBusinesses(byTerm: "tacos", location: nil, latitude: self.latitude, longitude: self.longitude, radius: nil, categories: nil, locale: nil, limit: nil, offset: nil, sortBy: CDYelpBusinessSortType.distance, priceTiers: nil, openNow: true, openAt: nil, attributes: nil) { response in
             if let response = response, response.error == nil {
                 self.strLabel.removeFromSuperview()
                 self.activityIndicator.removeFromSuperview()
@@ -273,7 +242,7 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
     func fetchGuide() {
         let url = URL(string: "https://docs.google.com/spreadsheets/d/e/2PACX-1vT7AS8-joC6aaPByYJT00uUDQ9ueyQ08bBKOuZSQPCBCe4K-hOLKzgsgcOw5JQELXfGjatmG_mTLrSD/pubhtml?gid=0&single=true")
         
-        Alamofire.request(url!).responseString { (response) in
+        Alamofire.request(url!).responseString { response in
             print("\(response.result.isSuccess)")
             if let html = response.result.value {
                 self.parseHTML(html: html)
