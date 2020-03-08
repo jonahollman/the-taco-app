@@ -178,7 +178,7 @@ NSString *BSGBreadcrumbTypeValue(BSGBreadcrumbType type) {
 
 @implementation BugsnagBreadcrumbs
 
-NSUInteger BreadcrumbsDefaultCapacity = 20;
+NSUInteger BreadcrumbsDefaultCapacity = 25;
 
 - (instancetype)init {
     static NSString *const BSGBreadcrumbCacheFileName = @"bugsnag_breadcrumbs.json";
@@ -233,8 +233,8 @@ NSUInteger BreadcrumbsDefaultCapacity = 20;
     }
 }
 
-- (NSDictionary *)cachedBreadcrumbs {
-    __block NSDictionary *cache = nil;
+- (NSArray *)cachedBreadcrumbs {
+    __block NSArray *cache = nil;
     dispatch_barrier_sync(self.readWriteQueue, ^{
         NSError *error = nil;
         NSData *data = [NSData dataWithContentsOfFile:self.cachePath options:0 error:&error];
@@ -245,7 +245,7 @@ NSUInteger BreadcrumbsDefaultCapacity = 20;
             bsg_log_err(@"Failed to read breadcrumbs from disk: %@", error);
         }
     });
-    return cache;
+    return [cache isKindOfClass:[NSArray class]] ? cache : nil;
 }
 
 @synthesize capacity = _capacity;
@@ -263,7 +263,7 @@ NSUInteger BreadcrumbsDefaultCapacity = 20;
         }
         [self resizeToFitCapacity:capacity];
         [self willChangeValueForKey:NSStringFromSelector(@selector(capacity))];
-        _capacity = capacity;
+        _capacity = MIN(100, capacity);
         [self didChangeValueForKey:NSStringFromSelector(@selector(capacity))];
     }
 }

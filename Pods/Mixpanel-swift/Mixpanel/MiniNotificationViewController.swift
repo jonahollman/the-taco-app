@@ -47,24 +47,47 @@ class MiniNotificationViewController: BaseNotificationViewController {
     }
 
     override func show(animated: Bool) {
-        guard MixpanelInstance.sharedUIApplication() != nil else {
+        guard let sharedUIApplication = MixpanelInstance.sharedUIApplication() else {
             return
         }
         canPan = false
+        var bounds: CGRect
+        if #available(iOS 13.0, *) {
+            let windowScene = sharedUIApplication
+                           .connectedScenes
+                           .filter { $0.activationState == .foregroundActive }
+                           .first
+            guard let scene = windowScene as? UIWindowScene else { return }
+            bounds = scene.coordinateSpace.bounds
+        } else {
+            bounds = UIScreen.main.bounds
+        }
         let frame: CGRect
-        if UIDevice.current.orientation.isPortrait
+        if sharedUIApplication.statusBarOrientation.isPortrait
             && UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiom.phone {
             frame = CGRect(x: InAppNotificationsConstants.miniSidePadding,
-                           y: UIScreen.main.bounds.size.height,
-                           width: UIScreen.main.bounds.size.width - (InAppNotificationsConstants.miniSidePadding * 2),
+                           y: bounds.size.height,
+                           width: bounds.size.width - (InAppNotificationsConstants.miniSidePadding * 2),
                            height: InAppNotificationsConstants.miniInAppHeight)
         } else { // Is iPad or Landscape mode
-            frame = CGRect(x: UIScreen.main.bounds.size.width / 4,
-                           y: UIScreen.main.bounds.size.height,
-                           width: UIScreen.main.bounds.size.width / 2,
+            frame = CGRect(x: bounds.size.width / 4,
+                           y: bounds.size.height,
+                           width: bounds.size.width / 2,
                            height: InAppNotificationsConstants.miniInAppHeight)
         }
-        window = UIWindow(frame: frame)
+        if #available(iOS 13.0, *) {
+            let windowScene = sharedUIApplication
+                .connectedScenes
+                .filter { $0.activationState == .foregroundActive }
+                .first
+            if let windowScene = windowScene as? UIWindowScene {
+                window = UIWindow(frame: frame)
+                window?.windowScene = windowScene
+            }
+        } else {
+            window = UIWindow(frame: frame)
+        }
+
         if let window = window {
             window.windowLevel = UIWindow.Level.alert
             window.clipsToBounds = true
@@ -163,3 +186,4 @@ class MiniNotificationViewController: BaseNotificationViewController {
             }, completion: nil)
     }
 }
+

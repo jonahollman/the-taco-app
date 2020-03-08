@@ -28,7 +28,7 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
     var token = UserDefaults.standard.string(forKey: "token")
     var latitude = CLLocationDegrees()
     var longitude = CLLocationDegrees()
-    var checkLocationTimer = Timer()
+//    var checkLocationTimer = Timer()
     
     var activityIndicator = UIActivityIndicatorView()
     var strLabel = UILabel()
@@ -41,13 +41,13 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
         super.viewDidLoad()
         noLocationPopUp.isHidden = true
         introAnimation()
-        checkForLocationPermission()
+//        checkForLocationPermission()
         setupUI()
         
     }
     
     override func viewDidAppear(_ animated: Bool) {
-
+        checkForCity()
     }
 
     override func didReceiveMemoryWarning() {
@@ -67,7 +67,7 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
         UIView.animate(withDuration: 2.1, animations: {
             self.tacoButtonOutlet.alpha = 1
         }, completion: { (true) in
-            self.checkForLocationPermission()
+//            self.checkForLocationPermission()
         })
         
         UIView.animate(withDuration: 1.1, delay: 0.5, usingSpringWithDamping: 0.5, initialSpringVelocity: 3.1, options: [], animations: {
@@ -92,7 +92,7 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
                 self.showNoLocationPopUp()
             case .authorizedAlways, .authorizedWhenInUse:
                 locationManager.startUpdatingLocation()
-                self.checkLocationTimer.invalidate()
+//                self.checkLocationTimer.invalidate()
                 if !self.noLocationPopUp.isHidden {
                     self.dismissNoLocationPopUp()
                 }
@@ -109,35 +109,31 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
     
     func setupUI() {
         
-        if Device.size() == Size.screen4Inch {
-            self.losAngelesGuideButton.titleLabel?.font = UIFont.avenirMediumFontOfSize(size: 18)
+        if Device.size() == .screen4Inch {
+            losAngelesGuideButton.titleLabel?.font = UIFont.avenirMediumFontOfSize(size: 18)
         }
         
-        self.losAngelesGuideButton.layer.cornerRadius = self.losAngelesGuideButton.layer.frame.height / 2
-        self.losAngelesGuideButton.layer.borderWidth = 2
-        self.losAngelesGuideButton.layer.borderColor = UIColor(red: 1, green: 111/255, blue: 104/255, alpha: 1).cgColor
-        
+        losAngelesGuideButton.layer.cornerRadius = losAngelesGuideButton.layer.frame.height / 2
+        losAngelesGuideButton.layer.borderWidth = 2
+        losAngelesGuideButton.layer.borderColor = UIColor(red: 1, green: 111/255, blue: 104/255, alpha: 1).cgColor
     }
     
     func checkForCity() {
         
-        if CLLocationManager.locationServicesEnabled() {
-            if CLLocationManager.authorizationStatus() == .authorizedWhenInUse {
-                locationManager.startUpdatingLocation()
-                if (locationManager.location?.coordinate.latitude) != nil {
-                    self.latitude = (locationManager.location?.coordinate.latitude)!
-                    self.longitude = (locationManager.location?.coordinate.longitude)!
-                    let currentCoordinates = CLLocation(latitude: latitude, longitude: longitude)
-                    let distanceInMiles = currentCoordinates.distance(from: losAngelesCoordinate) / 1609
-                    if distanceInMiles <= 30 {
-                        showCityGuide()
-                        self.checkLocationTimer.invalidate()
-                        Mixpanel.mainInstance().track(event: "In City Guide Range", properties: ["City": "Los Angeles"])
-                        if UserDefaults.standard.object(forKey: "laTop50") == nil {
-                            fetchGuide()
-                        } else {
-                            print("Top 50 Stored")
-                        }
+        if CLLocationManager.locationServicesEnabled(), CLLocationManager.authorizationStatus() == .authorizedWhenInUse {
+            locationManager.startUpdatingLocation()
+            if (locationManager.location?.coordinate.latitude) != nil {
+                latitude = (locationManager.location?.coordinate.latitude)!
+                longitude = (locationManager.location?.coordinate.longitude)!
+                let currentCoordinates = CLLocation(latitude: latitude, longitude: longitude)
+                let distanceInMiles = currentCoordinates.distance(from: losAngelesCoordinate) / 1609
+                if distanceInMiles <= 30 {
+                    showCityGuide()
+                    Mixpanel.mainInstance().track(event: "In City Guide Range", properties: ["City": "Los Angeles"])
+                    if UserDefaults.standard.object(forKey: "laTop50") == nil {
+                        fetchGuide()
+                    } else {
+                        print("Top 50 Stored")
                     }
                 }
             }
@@ -170,7 +166,7 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
             }, completion: nil)
         }
         
-        checkLocationTimer = Timer.scheduledTimer(timeInterval: 2.0, target: self, selector: #selector(self.checkForLocationPermission), userInfo: nil, repeats: true)
+//        checkLocationTimer = Timer.scheduledTimer(timeInterval: 2.0, target: self, selector: #selector(self.checkForLocationPermission), userInfo: nil, repeats: true)
         
     }
     
@@ -190,7 +186,7 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
         }) { (true) in
             self.noLocationPopUp.isHidden = true
             self.noLocationPopUp.alpha = 1
-            self.checkLocationTimer.invalidate()
+//            self.checkLocationTimer.invalidate()
         }
     }
     
@@ -243,14 +239,17 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
     }
     
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        checkForLocationPermission()
+//        checkForLocationPermission()
         print("Location status updated")
     }
     
     func searchForTacos() {
         
-        appDelegate.apiClient.searchBusinesses(byTerm: "tacos", location: nil, latitude: self.latitude , longitude: self.longitude, radius: nil, categories: nil, locale: nil, limit: nil, offset: nil, sortBy: CDYelpBusinessSortType.distance, priceTiers: nil, openNow: true, openAt: nil, attributes: nil) { (response) in
+        appDelegate.apiClient.searchBusinesses(byTerm: "tacos", location: nil, latitude: self.latitude, longitude: self.longitude, radius: nil, categories: nil, locale: nil, limit: nil, offset: nil, sortBy: CDYelpBusinessSortType.distance, priceTiers: nil, openNow: true, openAt: nil, attributes: nil) { (response) in
             if let response = response, response.error == nil {
+                self.strLabel.removeFromSuperview()
+                self.activityIndicator.removeFromSuperview()
+                self.effectView.removeFromSuperview()
                 self.tacoResults = response.businesses!
                 if self.tacoResults.count > 0 {
                     self.performSegue(withIdentifier: "splashToResult", sender: self)

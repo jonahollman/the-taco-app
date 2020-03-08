@@ -45,6 +45,8 @@ protocol AppLifecycle {
 
 /// The class that represents the Mixpanel Instance
 open class MixpanelInstance: CustomDebugStringConvertible, FlushDelegate, AEDelegate {
+    /// apiToken string that identifies the project to track data to
+    open var apiToken = ""
 
     /// The a MixpanelDelegate object that gives control over Mixpanel network activity.
     open var delegate: MixpanelDelegate?
@@ -241,7 +243,6 @@ open class MixpanelInstance: CustomDebugStringConvertible, FlushDelegate, AEDele
     }
     #endif // DECIDE
 
-    var apiToken = ""
     var superProperties = InternalProperties()
     var eventsQueue = Queue()
     var flushEventsQueue = Queue()
@@ -253,8 +254,8 @@ open class MixpanelInstance: CustomDebugStringConvertible, FlushDelegate, AEDele
     var optOutStatus: Bool?
     let readWriteLock: ReadWriteLock
     #if os(iOS)
-    var reachability: SCNetworkReachability?
-    let telephonyInfo = CTTelephonyNetworkInfo()
+    static let reachability = SCNetworkReachabilityCreateWithName(nil, "api.mixpanel.com")
+    static let telephonyInfo = CTTelephonyNetworkInfo()
     #endif
     #if !os(OSX) && !WATCH_OS
     var taskId = UIBackgroundTaskIdentifier.invalid
@@ -282,16 +283,15 @@ open class MixpanelInstance: CustomDebugStringConvertible, FlushDelegate, AEDele
             decideInstance = Decide(basePathIdentifier: name, lock: self.readWriteLock)
         #endif // DECIDE
         let label = "com.mixpanel.\(self.apiToken)"
-        trackingQueue = DispatchQueue(label: label)
+        trackingQueue = DispatchQueue(label: "\(label).tracking)", qos: .utility)
         sessionMetadata = SessionMetadata(trackingQueue: trackingQueue)
         trackInstance = Track(apiToken: self.apiToken,
                               lock: self.readWriteLock,
                               metadata: sessionMetadata)
-        networkQueue = DispatchQueue(label: label)
+        networkQueue = DispatchQueue(label: "\(label).network)", qos: .utility)
 
         #if os(iOS)
-            reachability = SCNetworkReachabilityCreateWithName(nil, "api.mixpanel.com")
-            if let reachability = reachability {
+            if let reachability = MixpanelInstance.reachability {
                 var context = SCNetworkReachabilityContext(version: 0, info: nil, retain: nil, release: nil, copyDescription: nil)
                 func reachabilityCallback(reachability: SCNetworkReachability, flags: SCNetworkReachabilityFlags, unsafePointer: UnsafeMutableRawPointer?) -> Void {
                     let wifi = flags.contains(SCNetworkReachabilityFlags.reachable) && !flags.contains(SCNetworkReachabilityFlags.isWWAN)
@@ -449,7 +449,7 @@ open class MixpanelInstance: CustomDebugStringConvertible, FlushDelegate, AEDele
     deinit {
         NotificationCenter.default.removeObserver(self)
         #if os(iOS) && !WATCH_OS
-            if let reachability = reachability {
+            if let reachability = MixpanelInstance.reachability {
                 if !SCNetworkReachabilitySetCallback(reachability, nil, nil) {
                     Logger.error(message: "\(self) error unsetting reachability callback")
                 }
@@ -476,36 +476,37 @@ open class MixpanelInstance: CustomDebugStringConvertible, FlushDelegate, AEDele
     @objc private func applicationDidBecomeActive(_ notification: Notification) {
         flushInstance.applicationDidBecomeActive()
         #if DECIDE
-            if checkForVariantsOnActive || checkForNotificationOnActive {
-                checkDecide { decideResponse in
-                    if let decideResponse = decideResponse {
-                        DispatchQueue.main.sync {
-                            decideResponse.toFinishVariants.forEach { $0.finish() }
-                        }
+        checkDecide { decideResponse in
+            if let decideResponse = decideResponse {
+                DispatchQueue.main.sync {
+                    decideResponse.toFinishVariants.forEach { $0.finish() }
+                }
 
-                        if self.showNotificationOnActive && !decideResponse.unshownInAppNotifications.isEmpty {
-                            self.decideInstance.notificationsInstance.showNotification(decideResponse.unshownInAppNotifications.first!)
-                        }
+                if self.checkForNotificationOnActive && self.showNotificationOnActive && !decideResponse.unshownInAppNotifications.isEmpty {
+                    self.decideInstance.notificationsInstance.showNotification(decideResponse.unshownInAppNotifications.first!)
+                }
 
-                        DispatchQueue.main.sync {
-                            for binding in decideResponse.newCodelessBindings {
-                                binding.execute()
-                            }
-                        }
+                DispatchQueue.main.sync {
+                    for binding in decideResponse.newCodelessBindings {
+                        binding.execute()
+                    }
+                }
 
-                        DispatchQueue.main.sync {
-                            for variant in decideResponse.newVariants {
-                                variant.execute()
-                                self.markVariantRun(variant)
-                            }
-                        }
-
-                        if decideResponse.integrations.count > 0 {
-                            self.connectIntegrations.setupIntegrations(decideResponse.integrations)
+                if self.checkForVariantsOnActive {
+                    DispatchQueue.main.sync {
+                        for variant in decideResponse.newVariants {
+                            variant.execute()
+                            self.markVariantRun(variant)
                         }
                     }
                 }
+
+                if decideResponse.integrations.count > 0 {
+                    self.connectIntegrations.setupIntegrations(decideResponse.integrations)
+                }
             }
+        }
+
         #endif // DECIDE
     }
 
@@ -662,7 +663,7 @@ open class MixpanelInstance: CustomDebugStringConvertible, FlushDelegate, AEDele
     }
     #if os(iOS)
     @objc func setCurrentRadio() {
-        var radio = telephonyInfo.currentRadioAccessTechnology ?? "None"
+        var radio = MixpanelInstance.telephonyInfo.currentRadioAccessTechnology ?? "None"
         let prefix = "CTRadioAccessTechnology"
         if radio.hasPrefix(prefix) {
             radio = (radio as NSString).substring(from: prefix.count)
@@ -671,11 +672,11 @@ open class MixpanelInstance: CustomDebugStringConvertible, FlushDelegate, AEDele
             AutomaticProperties.automaticPropertiesLock.write { [weak self, radio] in
                 AutomaticProperties.properties["$radio"] = radio
 
-                guard let self = self else {
+                guard self != nil else {
                     return
                 }
 
-                if let carrierName = self.telephonyInfo.subscriberCellularProvider?.carrierName {
+                if let carrierName = MixpanelInstance.telephonyInfo.subscriberCellularProvider?.carrierName {
                     AutomaticProperties.properties["$carrier"] = carrierName
 
                 } else {
@@ -908,7 +909,21 @@ extension MixpanelInstance {
                     self.people.peopleQueue = Queue()
                     self.people.unidentifiedQueue = Queue()
                     #if DECIDE
-                    self.decideInstance.notificationsInstance.shownNotifications = Set()
+                    /*
+                     * TODO: Index `shownNotifications` on token+distinctId and never clear.
+                     *
+                     * Currently, are options are:
+                     *  1.  Clear `shownNotifications` on reset. This can result in a user seeing a duplicate notification if
+                     *      there is a data delay and they logout and back in.
+                     *  2.  Not clear `showNotifications` on reset. This can result in a notification not being shown to
+                     *      subsequent user in multi-user, same device scenarios.
+                     *
+                     *  The multi-user, same device scenario seems more of an edgecase thus justifying the change to not
+                     *  clear `shownNotifications` on logout.
+                     *
+                     */
+                    // self.decideInstance.notificationsInstance.shownNotifications = Set()
+
                     self.decideInstance.decideFetched = false
                     self.decideInstance.ABTestingInstance.variants = Set()
                     self.decideInstance.codelessInstance.codelessBindings = Set()
@@ -1138,15 +1153,31 @@ extension MixpanelInstance {
                 #else
                 let automaticEventsEnabled = false
                 #endif
-                self.flushInstance.flushEventsQueue(&self.flushEventsQueue,
-                                                    automaticEventsEnabled: automaticEventsEnabled)
-                self.flushInstance.flushPeopleQueue(&self.people.flushPeopleQueue)
-                self.flushInstance.flushGroupsQueue(&self.flushGroupsQueue)
 
+                let flushEventsQueue = self.flushInstance.flushEventsQueue(self.flushEventsQueue,
+                                                                           automaticEventsEnabled: automaticEventsEnabled)
+                let flushPeopleQueue = self.flushInstance.flushPeopleQueue(self.people.flushPeopleQueue)
+                let flushGroupsQueue = self.flushInstance.flushGroupsQueue(self.flushGroupsQueue)
+                
+                var shadowEventsQueue = Queue()
+                var shadowPeopleQueue = Queue()
+                var shadowGroupsQueue = Queue()
+
+                self.readWriteLock.read {
+                    shadowEventsQueue = self.eventsQueue
+                    shadowPeopleQueue = self.people.peopleQueue
+                    shadowGroupsQueue = self.groupsQueue
+                }
                 self.readWriteLock.write {
-                    self.eventsQueue = self.flushEventsQueue + self.eventsQueue
-                    self.people.peopleQueue = self.people.flushPeopleQueue + self.people.peopleQueue
-                    self.groupsQueue = self.flushGroupsQueue + self.groupsQueue
+                    if let flushEventsQueue = flushEventsQueue {
+                        self.eventsQueue = flushEventsQueue + shadowEventsQueue
+                    }
+                    if let flushPeopleQueue = flushPeopleQueue {
+                        self.people.peopleQueue = flushPeopleQueue + shadowPeopleQueue
+                    }
+                    if let flushGroupsQueue = flushGroupsQueue {
+                        self.groupsQueue = flushGroupsQueue + shadowGroupsQueue
+                    }
                     self.flushEventsQueue.removeAll()
                     self.people.flushPeopleQueue.removeAll()
                     self.flushGroupsQueue.removeAll()
@@ -1181,19 +1212,35 @@ extension MixpanelInstance {
             return
         }
         let epochInterval = Date().timeIntervalSince1970
+
+
+       // }
+
         trackingQueue.async { [weak self, event, properties, epochInterval] in
             guard let self = self else { return }
-
-            let mergedProperties = self.trackInstance.track(event: event,
-                                        properties: properties,
-                                        eventsQueue: &self.eventsQueue,
-                                        timedEvents: &self.timedEvents,
-                                        superProperties: self.superProperties,
-                                        distinctId: self.distinctId,
-                                        anonymousId: self.anonymousId,
-                                        userId: self.userId,
-                                        hadPersistedDistinctId: self.hadPersistedDistinctId,
-                                        epochInterval: epochInterval)
+            var shadowEventsQueue = Queue()
+            var shadowTimedEvents = InternalProperties()
+            var shadowSuperProperties = InternalProperties()
+            
+            self.readWriteLock.read {
+                shadowEventsQueue = self.eventsQueue
+                shadowTimedEvents = self.timedEvents
+                shadowSuperProperties = self.superProperties
+            }
+            let (eventsQueue, timedEvents, mergedProperties) = self.trackInstance.track(event: event,
+                                                                                        properties: properties,
+                                                                                        eventsQueue: shadowEventsQueue,
+                                                                                        timedEvents: shadowTimedEvents,
+                                                                                        superProperties: shadowSuperProperties,
+                                                                                        distinctId: self.distinctId,
+                                                                                        anonymousId: self.anonymousId,
+                                                                                        userId: self.userId,
+                                                                                        hadPersistedDistinctId: self.hadPersistedDistinctId,
+                                                                                        epochInterval: epochInterval)
+            self.readWriteLock.write {
+                self.eventsQueue = eventsQueue
+                self.timedEvents = timedEvents
+            }
 
             self.readWriteLock.read {
                 Persistence.archiveEvents(self.flushEventsQueue + self.eventsQueue, token: self.apiToken)
@@ -1202,7 +1249,7 @@ extension MixpanelInstance {
             self.decideInstance.notificationsInstance.showNotification(event: event, properties: mergedProperties)
             #endif  // DECIDE
         }
-        
+
         if MixpanelInstance.isiOSAppExtension() {
             flush()
         }
@@ -1272,21 +1319,32 @@ extension MixpanelInstance {
     }
 
     #if DECIDE
-    
     func trackPushNotification(_ userInfo: [AnyHashable: Any],
-                                      event: String = "$campaign_received") {
+                                      event: String = "$campaign_received",
+                                      properties: Properties = [:]) {
         if hasOptedOutTracking() {
             return
         }
         if let mpPayload = userInfo["mp"] as? InternalProperties {
             if let m = mpPayload["m"], let c = mpPayload["c"] {
-                var properties = Properties()
+                var properties = properties
                 for (key, value) in mpPayload {
-                    if key != "m" && key != "c" {
-                        // Check Int first, since a number in the push payload is parsed as __NCSFNumber
-                        // which fails to convert to MixpanelType.
-                        if let typedValue = value as? Int { properties[key] = typedValue }
-                        if let typedValue = value as? MixpanelType { properties[key] = typedValue }
+                    // "token" and "distinct_id" are sent with the Mixpanel push payload but we don't need to track them
+                    // they are handled upstream to initialize the mixpanel instance and "distinct_id" will be passed in
+                    // explicitly in "additionalProperties"
+                    if !["m", "c", "token", "distinct_id"].contains(key) {
+                        // https://stackoverflow.com/questions/53547595/type-checks-on-int-and-bool-values-are-returning-incorrectly-in-swift-4-2
+                        if let typedValue = value as? NSNumber {
+                            if (typedValue === kCFBooleanTrue) {
+                                properties[key] = typedValue.boolValue
+                            } else if (typedValue === kCFBooleanFalse) {
+                                properties[key] = typedValue.boolValue
+                            } else {
+                                properties[key] = typedValue.intValue
+                            }
+                        }
+                        else if let typedValue = value as? String { properties[key] = typedValue }
+                        else if let typedValue = value as? MixpanelType { properties[key] = typedValue }
                     }
                 }
                 properties["campaign_id"]  = c as? Int

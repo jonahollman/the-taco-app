@@ -1,17 +1,17 @@
 PODS:
-  - Alamofire (4.8.2)
+  - Alamofire (4.9.1)
   - AlamofireObjectMapper (5.2.0):
     - Alamofire (~> 4.7)
     - ObjectMapper (~> 3.4)
-  - Bugsnag (5.22.3)
+  - Bugsnag (5.23.0)
   - CDYelpFusionKit (1.5.1):
     - AlamofireObjectMapper (= 5.2.0)
-  - Device (3.1.2)
-  - Mixpanel-swift (2.6.3):
-    - Mixpanel-swift/Complete (= 2.6.3)
-  - Mixpanel-swift/Complete (2.6.3)
+  - Device (3.2.1)
+  - Mixpanel-swift (2.7.0):
+    - Mixpanel-swift/Complete (= 2.7.0)
+  - Mixpanel-swift/Complete (2.7.0)
   - ObjectMapper (3.5.1)
-  - SwiftSoup (2.2.0)
+  - SwiftSoup (2.3.0)
 
 DEPENDENCIES:
   - Bugsnag
@@ -21,7 +21,7 @@ DEPENDENCIES:
   - SwiftSoup
 
 SPEC REPOS:
-  https://github.com/cocoapods/specs.git:
+  trunk:
     - Alamofire
     - AlamofireObjectMapper
     - Bugsnag
@@ -32,15 +32,15 @@ SPEC REPOS:
     - SwiftSoup
 
 SPEC CHECKSUMS:
-  Alamofire: ae5c501addb7afdbb13687d7f2f722c78734c2d3
+  Alamofire: 85e8a02c69d6020a0d734f6054870d7ecb75cf18
   AlamofireObjectMapper: 92b6ce2423a9d159e686f6a1d514a009bf903ddc
-  Bugsnag: ba9fec5ebe711cb2e1da5225d89654d72e7254e3
+  Bugsnag: 1f33ee5b55bc4b131a30e0fe6db714da9c6609f6
   CDYelpFusionKit: 94a7802fa23ef0eb78514c8a6f246f55b6bc91f0
-  Device: 62242076214c30fb5760174b3601cefafa70a481
-  Mixpanel-swift: b022ad6cc352f916581b4f223f8a1e76d047fbe3
+  Device: 0738862dd8a30856b4bd9e21cb9b728873d21392
+  Mixpanel-swift: af074beb44bdac38ab611e1d575a073bbb3d6780
   ObjectMapper: 70187b8941977c62ccfb423caf6b50be405cabf0
-  SwiftSoup: 230991361c5ba249d140161860a3864a28b63860
+  SwiftSoup: d78683f7ea0ae5733225a9e1d3bee5b256449df4
 
-PODFILE CHECKSUM: e2ea569b9434a9c5b48059eefe2d73163bcb836e
+PODFILE CHECKSUM: 9734fa6f6456cdd7499def0cded1bbf2f8c034ab
 
-COCOAPODS: 1.7.5
+COCOAPODS: 1.8.4

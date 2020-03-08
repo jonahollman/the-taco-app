@@ -125,7 +125,6 @@ open class Mixpanel {
     open class func removeInstance(name: String) {
         MixpanelManager.sharedInstance.removeInstance(name: name)
     }
-
 }
 
 class MixpanelManager {

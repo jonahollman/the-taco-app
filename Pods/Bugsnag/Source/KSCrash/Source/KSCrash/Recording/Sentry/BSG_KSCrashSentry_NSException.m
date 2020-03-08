@@ -27,6 +27,7 @@
 #import "BSG_KSCrashSentry_NSException.h"
 #import "BSG_KSCrashSentry_Private.h"
 #include "BSG_KSMach.h"
+#include "BSG_KSCrashC.h"
 
 //#define BSG_KSLogger_LocalLevel TRACE
 #import "BSG_KSLogger.h"
@@ -128,9 +129,7 @@ void bsg_recordException(NSException *exception) {
         bsg_g_context->stackTraceLength = (int)numFrames;
 
         BSG_KSLOG_DEBUG(@"Calling main crash handler.");
-        char errorClass[21];
-        strncpy(errorClass, bsg_g_context->NSException.name, sizeof(errorClass));
-        bsg_g_context->onCrash('e', errorClass);
+        bsg_g_context->onCrash(crashContext());
     }
 }
 

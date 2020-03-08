@@ -16,6 +16,7 @@
 #import "BugsnagConfiguration.h"
 #import "BugsnagCrashReport.h"
 #import "BugsnagMetaData.h"
+#import "BugsnagPlugin.h"
 
 FOUNDATION_EXPORT double BugsnagVersionNumber;
 FOUNDATION_EXPORT const unsigned char BugsnagVersionString[];

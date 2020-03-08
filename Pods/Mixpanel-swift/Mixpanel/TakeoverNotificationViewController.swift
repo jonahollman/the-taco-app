@@ -140,10 +140,24 @@ class TakeoverNotificationViewController: BaseNotificationViewController {
     }
 
     override func show(animated: Bool) {
-        window = UIWindow(frame: CGRect(x: 0,
-                                        y: 0,
-                                        width: UIScreen.main.bounds.size.width,
-                                        height: UIScreen.main.bounds.size.height))
+        guard let sharedUIApplication = MixpanelInstance.sharedUIApplication() else {
+            return
+        }
+        if #available(iOS 13.0, *) {
+            let windowScene = sharedUIApplication
+                .connectedScenes
+                .filter { $0.activationState == .foregroundActive }
+                .first
+            if let windowScene = windowScene as? UIWindowScene {
+                window = UIWindow(frame: windowScene.coordinateSpace.bounds)
+                window?.windowScene = windowScene
+            }
+        } else {
+            window = UIWindow(frame: CGRect(x: 0,
+                                            y: 0,
+                                            width: UIScreen.main.bounds.size.width,
+                                            height: UIScreen.main.bounds.size.height))
+        }
         if let window = window {
             window.alpha = 0
             window.windowLevel = UIWindow.Level.alert
@@ -238,3 +252,4 @@ class InAppButtonView: UIButton {
         }
     }
 }
+

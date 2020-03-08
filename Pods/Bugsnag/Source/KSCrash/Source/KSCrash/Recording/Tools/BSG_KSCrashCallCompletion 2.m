@@ -1,7 +1,7 @@
 //
-//  BSG_KSCrashSentry_Deadlock.h
+//  BSG_KSCrashCallCompletion.m
 //
-//  Created by Karl Stenerud on 2012-12-09.
+//  Created by Karl Stenerud on 2013-02-10.
 //
 //  Copyright (c) 2012 Karl Stenerud. All rights reserved.
 //
@@ -24,40 +24,12 @@
 // THE SOFTWARE.
 //
 
-/* Catches deadlocks in threads and queues.
- */
+#import "BSG_KSCrashCallCompletion.h"
 
-#ifndef HDR_BSG_KSCrashSentry_Deadlock_h
-#define HDR_BSG_KSCrashSentry_Deadlock_h
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-#include "BSG_KSCrashSentry.h"
-
-/** Install the deadlock handler.
- *
- * @param context The crash context to fill out when a crash occurs.
- *
- * @return true if installation was succesful.
- */
-bool bsg_kscrashsentry_installDeadlockHandler(
-    BSG_KSCrash_SentryContext *context);
-
-/** Uninstall our custome NSException handler.
- */
-void bsg_kscrashsentry_uninstallDeadlockHandler(void);
-
-/** Set the interval between watchdog checks on the main thread.
- * Default is 5 seconds.
- *
- * @param value The number of seconds between checks (0 = disabled).
- */
-void bsg_kscrashsentry_setDeadlockHandlerWatchdogInterval(double value);
-
-#ifdef __cplusplus
+void bsg_kscrash_i_callCompletion(
+    BSG_KSCrashReportFilterCompletion onCompletion, NSUInteger reportCount,
+    BOOL completed, NSError *error) {
+    if (onCompletion) {
+        onCompletion(reportCount, completed, error);
+    }
 }
-#endif
-
-#endif // HDR_KSCrashSentry_Deadlock_h

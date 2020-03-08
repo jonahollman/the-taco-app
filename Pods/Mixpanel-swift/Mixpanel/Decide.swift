@@ -63,7 +63,10 @@ class Decide {
 
         if !decideFetched || forceFetch {
             let semaphore = DispatchSemaphore(value: 0)
-            decideRequest.sendRequest(distinctId: distinctId, token: token) { decideResult in
+            decideRequest.sendRequest(distinctId: distinctId, token: token) { [weak self] decideResult in
+                guard let self = self else {
+                    return
+                }
                 guard let result = decideResult else {
                     semaphore.signal()
                     completion(nil)
@@ -130,9 +133,8 @@ class Decide {
 
                 let runningVariants = Set(self.ABTestingInstance.variants.filter { return $0.running })
                 decideResponse.toFinishVariants = runningVariants.subtracting(parsedVariants)
-                let newVariants = parsedVariants.subtracting(runningVariants)
-                decideResponse.newVariants = newVariants
-                self.ABTestingInstance.variants = newVariants.union(runningVariants)
+                decideResponse.newVariants = parsedVariants.subtracting(runningVariants)
+                self.ABTestingInstance.variants = parsedVariants.subtracting(runningVariants).union(runningVariants)
 
                 if let automaticEvents = result["automatic_events"] as? Bool {
                     self.automaticEventsEnabled = automaticEvents
@@ -155,16 +157,17 @@ class Decide {
             !notificationsInstance.shownNotifications.contains($0.ID)
         }
         
-        let unshownTriggeredInapps = notificationsInstance.triggeredNotifications.filter {
+        let allTriggeredNotifications = notificationsInstance.triggeredNotifications
+        notificationsInstance.triggeredNotifications = notificationsInstance.triggeredNotifications.filter {
             !notificationsInstance.shownNotifications.contains($0.ID)
         }
 
         Logger.info(message: "decide check found \(decideResponse.unshownInAppNotifications.count) " +
             "available notifications out of " +
             "\(notificationsInstance.inAppNotifications.count) total")
-        Logger.info(message: "decide check found \(unshownTriggeredInapps.count) " +
+        Logger.info(message: "decide check found \(notificationsInstance.triggeredNotifications.count) " +
             "available triggered notifications out of " +
-            "\(notificationsInstance.triggeredNotifications.count) total")
+            "\(allTriggeredNotifications.count) total")
         Logger.info(message: "decide check found \(decideResponse.newCodelessBindings.count) " +
             "new codeless bindings out of \(codelessInstance.codelessBindings)")
         Logger.info(message: "decide check found \(decideResponse.newVariants.count) " +

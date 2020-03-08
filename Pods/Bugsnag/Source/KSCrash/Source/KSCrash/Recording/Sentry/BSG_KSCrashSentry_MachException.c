@@ -29,6 +29,7 @@
 
 //#define BSG_KSLogger_LocalLevel TRACE
 #include "BSG_KSLogger.h"
+#include "BSG_KSCrashC.h"
 
 #if BSG_KSCRASH_HAS_MACH
 
@@ -285,9 +286,7 @@ void *ksmachexc_i_handleExceptions(void *const userData) {
         bsg_g_context->mach.subcode = exceptionMessage.code[1];
 
         BSG_KSLOG_DEBUG("Calling main crash handler.");
-        char errorClass[21];
-        strncpy(errorClass, bsg_ksmachexceptionName(bsg_g_context->mach.type), sizeof(errorClass));
-        bsg_g_context->onCrash('e', errorClass);
+        bsg_g_context->onCrash(crashContext());
 
         BSG_KSLOG_DEBUG(
             "Crash handling complete. Restoring original handlers.");
