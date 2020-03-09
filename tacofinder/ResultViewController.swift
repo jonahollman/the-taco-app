@@ -29,23 +29,23 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
     @IBOutlet var nextButton: UIButton!
     @IBOutlet var homeButton: UIButton!
     @IBOutlet var mapHeight: NSLayoutConstraint!
-    
     @IBOutlet var tacoHoursTop: NSLayoutConstraint!
     @IBOutlet var nextWidth: NSLayoutConstraint!
     @IBOutlet var favesWidth: NSLayoutConstraint!
     @IBOutlet var homeWidth: NSLayoutConstraint!
+    
     var locationManager = CLLocationManager()
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
     var tacoResults = [CDYelpBusiness]()
     var tacoLocation: CDYelpCoordinates?
     var resultNumber = 0
-    var favorites = [String]()
-    var favoriteLats = [CLLocationDegrees]()
-    var favoriteLongs = [CLLocationDegrees]()
+    var favorites: [String] = []
+    var favoriteLats: [CLLocationDegrees] = []
+    var favoriteLongs: [CLLocationDegrees] = []
     var isFavorite = false
-    var phoneNumber = String()
+    var phoneNumber = ""
     var top50Dictionary = [[String: String]]()
-    var tacoLink = String()
+    var tacoLink = ""
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -69,11 +69,8 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         }
         
         setupUI()
-
         setupResult()
-        
         setupFavoritesIcon()
-        
     }
     
     func setupResult() {
@@ -82,7 +79,6 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
             self.tacoName.text = result.name
             self.tacoAddress.text = "\(result.location!.displayAddress![0])"
             if result.displayPhone != nil {
-          //  self.tacoPhone.setTitle(result.displayPhone, for: .normal)
                 self.phoneNumber = result.phone!
                 self.tacoPhone.isHidden = false
             } else {
@@ -93,14 +89,14 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
             self.setupHours(id: result.id!, day: self.getDay())
             Mixpanel.mainInstance().track(event: "Viewed Taco Result", properties: ["name": result.name!, "city": (result.location?.city!)!, "state": (result.location?.state!)!])
         }
-        self.tacoLocation = result.coordinates
+        tacoLocation = result.coordinates
         setupMap(location: result.coordinates!)
         checkIfFavorite()
     }
     
     func setupMap(location: CDYelpCoordinates) {
         locationMap.delegate = self
-        self.locationMap.removeAnnotations(self.locationMap.annotations)
+        locationMap.removeAnnotations(locationMap.annotations)
         
         let center = CLLocationCoordinate2D(latitude: (location.latitude)!, longitude: (location.longitude)!)
         let pin = MKPointAnnotation()
@@ -112,30 +108,30 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
     
     func setupFavoritesIcon() {
         let tap = UITapGestureRecognizer(target: self, action: #selector(changeFavoritesStatus))
-        self.favoritesIcon.isUserInteractionEnabled = true
-        self.favoritesIcon.addGestureRecognizer(tap)
+        favoritesIcon.isUserInteractionEnabled = true
+        favoritesIcon.addGestureRecognizer(tap)
     }
     
     func checkIfFavorite() {
         print("Favorites: \(favorites)")
         for favorite in favorites {
             if favorite == tacoResults[resultNumber].name {
-                self.favoritesIcon.image = UIImage(named: "heart-outline")
-                self.isFavorite = true
+                favoritesIcon.image = UIImage(named: "heart-outline")
+                isFavorite = true
                 break
             } else {
-                self.favoritesIcon.image = UIImage(named: "heart-outline-plus")
-                self.isFavorite = false
+                favoritesIcon.image = UIImage(named: "heart-outline-plus")
+                isFavorite = false
             }
         }
-        self.tacoFavoriteStar.isHidden = true
+        tacoFavoriteStar.isHidden = true
         for entry in top50Dictionary {
             if entry["name"] == tacoResults[resultNumber].name {
-                self.tacoFavoriteStar.isHidden = false
+                tacoFavoriteStar.isHidden = false
                 print("Isatop50")
                 break
             } else {
-                self.tacoFavoriteStar.isHidden = true
+                tacoFavoriteStar.isHidden = true
             }
         }
     }
@@ -182,10 +178,10 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         homeButton.layer.masksToBounds = false
         homeButton.layer.cornerRadius = 5
         
-        self.tacoHours.layer.cornerRadius = self.tacoHours.layer.frame.height / 2
-        self.tacoHours.layer.borderColor = UIColor.green.cgColor
-        self.tacoHours.layer.borderWidth = 2
-        self.tacoHours.sizeToFit()
+        tacoHours.layer.cornerRadius = tacoHours.layer.frame.height / 2
+        tacoHours.layer.borderColor = UIColor.green.cgColor
+        tacoHours.layer.borderWidth = 2
+        tacoHours.sizeToFit()
         
     }
     
@@ -204,20 +200,20 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
     }
     
     @objc func changeFavoritesStatus() {
-        if self.isFavorite {
-            self.favoritesIcon.image = UIImage(named: "heart-outline-plus")
-            self.isFavorite = false
-            let index = self.favorites.firstIndex(of: self.tacoName.text!)
-            self.favorites.remove(at: index!)
-            self.favoriteLats.remove(at: index!)
-            self.favoriteLongs.remove(at: index!)
+        if isFavorite {
+            favoritesIcon.image = UIImage(named: "heart-outline-plus")
+            isFavorite = false
+            let index = favorites.firstIndex(of: tacoName.text!)
+            favorites.remove(at: index!)
+            favoriteLats.remove(at: index!)
+            favoriteLongs.remove(at: index!)
             print("Favorites: \(favorites)")
         } else {
-            self.favoritesIcon.image = UIImage(named: "heart-outline")
-            self.isFavorite = true
-            self.favorites.append(self.tacoName.text!)
-            self.favoriteLats.append((self.tacoLocation?.latitude!)!)
-            self.favoriteLongs.append((self.tacoLocation?.longitude)!)
+            favoritesIcon.image = UIImage(named: "heart-outline")
+            isFavorite = true
+            favorites.append(tacoName.text!)
+            favoriteLats.append((tacoLocation?.latitude!)!)
+            favoriteLongs.append((tacoLocation?.longitude)!)
             Mixpanel.mainInstance().track(event: "Added to Favorites", properties: ["name": self.tacoName.text!, "city": (tacoResults[resultNumber].location?.city)!, "state": (tacoResults[resultNumber].location?.state)!])
             print("Favorites: \(favorites)")
         }
@@ -227,54 +223,54 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
     func setupStars(rating: Double) {
         switch rating {
         case 0:
-            self.yelpStars.image = UIImage.yelpStars(numberOfStars: CDYelpStars.zero, forSize: .regular)
-            self.yelpStars.image = UIImage(named: "regular_0")
+            yelpStars.image = UIImage.yelpStars(numberOfStars: CDYelpStars.zero, forSize: .regular)
+            yelpStars.image = UIImage(named: "regular_0")
             break
         case 1:
-            self.yelpStars.image = UIImage.yelpStars(numberOfStars: CDYelpStars.one, forSize: .regular)
-            self.yelpStars.image = UIImage(named: "regular_1")
+            yelpStars.image = UIImage.yelpStars(numberOfStars: CDYelpStars.one, forSize: .regular)
+            yelpStars.image = UIImage(named: "regular_1")
             break
         case 1.5:
-            self.yelpStars.image = UIImage.yelpStars(numberOfStars: CDYelpStars.oneHalf, forSize: .regular)
-            self.yelpStars.image = UIImage(named: "regular_1_half")
+            yelpStars.image = UIImage.yelpStars(numberOfStars: CDYelpStars.oneHalf, forSize: .regular)
+            yelpStars.image = UIImage(named: "regular_1_half")
             break
         case 2:
-            self.yelpStars.image = UIImage.yelpStars(numberOfStars: CDYelpStars.two, forSize: .regular)
-            self.yelpStars.image = UIImage(named: "regular_2")
+            yelpStars.image = UIImage.yelpStars(numberOfStars: CDYelpStars.two, forSize: .regular)
+            yelpStars.image = UIImage(named: "regular_2")
             break
         case 2.5:
-            self.yelpStars.image = UIImage.yelpStars(numberOfStars: CDYelpStars.twoHalf, forSize: .regular)
-            self.yelpStars.image = UIImage(named: "regular_2_half")
+            yelpStars.image = UIImage.yelpStars(numberOfStars: CDYelpStars.twoHalf, forSize: .regular)
+            yelpStars.image = UIImage(named: "regular_2_half")
             break
         case 3:
-            self.yelpStars.image = UIImage.yelpStars(numberOfStars: CDYelpStars.three, forSize: .regular)
-            self.yelpStars.image = UIImage(named: "regular_3")
+            yelpStars.image = UIImage.yelpStars(numberOfStars: CDYelpStars.three, forSize: .regular)
+            yelpStars.image = UIImage(named: "regular_3")
             break
         case 3.5:
-            self.yelpStars.image = UIImage.yelpStars(numberOfStars: CDYelpStars.threeHalf, forSize: .regular)
-            self.yelpStars.image = UIImage(named: "regular_3_half")
+            yelpStars.image = UIImage.yelpStars(numberOfStars: CDYelpStars.threeHalf, forSize: .regular)
+            yelpStars.image = UIImage(named: "regular_3_half")
             break
         case 4:
-            self.yelpStars.image = UIImage.yelpStars(numberOfStars: CDYelpStars.four, forSize: .regular)
-            self.yelpStars.image = UIImage(named: "regular_4")
+            yelpStars.image = UIImage.yelpStars(numberOfStars: CDYelpStars.four, forSize: .regular)
+            yelpStars.image = UIImage(named: "regular_4")
             break
         case 4.5:
-            self.yelpStars.image = UIImage.yelpStars(numberOfStars: CDYelpStars.fourHalf, forSize: .regular)
-            self.yelpStars.image = UIImage(named: "regular_4_half")
+            yelpStars.image = UIImage.yelpStars(numberOfStars: CDYelpStars.fourHalf, forSize: .regular)
+            yelpStars.image = UIImage(named: "regular_4_half")
             break
         case 5:
-            self.yelpStars.image = UIImage.yelpStars(numberOfStars: CDYelpStars.five, forSize: .regular)
-            self.yelpStars.image = UIImage(named: "regular_5")
+            yelpStars.image = UIImage.yelpStars(numberOfStars: CDYelpStars.five, forSize: .regular)
+            yelpStars.image = UIImage(named: "regular_5")
             break
         default:
-            self.yelpStars.image = UIImage.yelpStars(numberOfStars: CDYelpStars.zero, forSize: .regular)
-            self.yelpStars.image = UIImage(named: "regular_0")
+            yelpStars.image = UIImage.yelpStars(numberOfStars: CDYelpStars.zero, forSize: .regular)
+            yelpStars.image = UIImage(named: "regular_0")
         }
     }
     
     func setupHours(id: String, day: Int) {
-        self.tacoHours.text = "Open     "
-        appDelegate.apiClient.fetchBusiness(forId: id, locale: nil) { (business) in
+        tacoHours.text = "Open     "
+        appDelegate.apiClient.fetchBusiness(forId: id, locale: nil) { business in
             if let business = business {
                 if business.hours!.count > 0 {
                     if business.hours![0].open != nil {

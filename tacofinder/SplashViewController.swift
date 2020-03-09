@@ -221,7 +221,11 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
                 self.effectView.removeFromSuperview()
                 self.tacoResults = response.businesses!
                 if self.tacoResults.count > 0 {
-                    self.performSegue(withIdentifier: "splashToResult", sender: self)
+                    if let resultVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "resultVC") as? ResultViewController {
+                        resultVC.modalPresentationStyle = .fullScreen
+                        resultVC.tacoResults = self.tacoResults
+                        self.present(resultVC, animated: true, completion: nil)
+                    }
                 } else {
                     let noResultsAlert = UIAlertController(title: "Uh oh", message: "We can't find any tacos nearby! We highly suggest moving to an area with more deliciousness.", preferredStyle: .alert)
                     let okAction = UIAlertAction(title: "Ok", style: .cancel, handler: nil)
@@ -297,7 +301,6 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
         
     }
     
-    
     @IBAction func goToLAGuide(_ sender: Any) {
         let laGuide = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "laGuide")
         
@@ -305,18 +308,11 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
             let errorAlert = UIAlertController(title: "Uh oh", message: "We're having trouble finding you tacos. Check your internet connection and try again.", preferredStyle: .alert)
             let okAction = UIAlertAction(title: "Ok", style: .cancel, handler: nil)
             errorAlert.addAction(okAction)
-            self.present(errorAlert, animated: true, completion: nil)
-            self.fetchGuide()
+            present(errorAlert, animated: true, completion: nil)
+            fetchGuide()
         } else {
             Mixpanel.mainInstance().track(event: "Visited City Guide", properties: ["City": "Los Angeles"])
-            self.present(laGuide, animated: true, completion: nil)
-        }
-    }
-    
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.destination is ResultViewController {
-            let vc = segue.destination as! ResultViewController
-            vc.tacoResults = self.tacoResults
+            present(laGuide, animated: true, completion: nil)
         }
     }
     
