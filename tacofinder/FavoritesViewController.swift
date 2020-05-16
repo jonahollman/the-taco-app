@@ -35,16 +35,16 @@ class FavoritesViewController: UIViewController, UITableViewDataSource, UITableV
             favoriteLats = UserDefaults.standard.object(forKey: "favoriteLats") as! [CLLocationDegrees]
             favoriteLongs = UserDefaults.standard.object(forKey: "favoriteLongs") as! [CLLocationDegrees]
         } else {
-            self.hideTableAndDisplayAlert()
+            hideTableAndDisplayAlert()
         }
         
         if favorites.count == 0 {
-            self.hideTableAndDisplayAlert()
+            hideTableAndDisplayAlert()
         } else {
-            self.showTableAndHideAlert()
+            showTableAndHideAlert()
         }
         
-        if Device.size() == Size.screen4Inch {
+        if Device.size() == .screen4Inch {
             emptyTableBottom.constant = 60
             emptyTableTop.constant = 45
         }
@@ -63,16 +63,16 @@ class FavoritesViewController: UIViewController, UITableViewDataSource, UITableV
     }
     
     func hideTableAndDisplayAlert() {
-        self.favoritesTable.isHidden = true
-        self.emptyTableAlert.isHidden = false
-        self.emptyTableAlert.layer.cornerRadius = 10
-        self.emptyTableAlert.layer.borderWidth = 2
-        self.emptyTableAlert.layer.borderColor = UIColor.black.cgColor
+        favoritesTable.isHidden = true
+        emptyTableAlert.isHidden = false
+        emptyTableAlert.layer.cornerRadius = 10
+        emptyTableAlert.layer.borderWidth = 2
+        emptyTableAlert.layer.borderColor = UIColor.black.cgColor
     }
     
     func showTableAndHideAlert() {
-        self.favoritesTable.isHidden = false
-        self.emptyTableAlert.isHidden = true
+        favoritesTable.isHidden = false
+        emptyTableAlert.isHidden = true
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -113,15 +113,15 @@ class FavoritesViewController: UIViewController, UITableViewDataSource, UITableV
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let coordinate = CLLocationCoordinate2DMake(favoriteLats[indexPath.row], favoriteLongs[indexPath.row])
         
-        let placemark:MKPlacemark = MKPlacemark(coordinate: coordinate, addressDictionary: nil)
+        let placemark = MKPlacemark(coordinate: coordinate, addressDictionary: nil)
         
-        let mapItem:MKMapItem = MKMapItem(placemark: placemark)
+        let mapItem = MKMapItem(placemark: placemark)
         
         mapItem.name = "\(favorites[indexPath.row])"
         
-        let launchOptions:NSDictionary = NSDictionary(object: MKLaunchOptionsDirectionsModeWalking, forKey: MKLaunchOptionsDirectionsModeKey as NSCopying)
+        let launchOptions = NSDictionary(object: MKLaunchOptionsDirectionsModeWalking, forKey: MKLaunchOptionsDirectionsModeKey as NSCopying)
         
-        let currentLocationMapItem:MKMapItem = MKMapItem.forCurrentLocation()
+        let currentLocationMapItem = MKMapItem.forCurrentLocation()
         
         Mixpanel.mainInstance().track(event: "Removed from Favorites", properties: ["name": favorites[indexPath.row], "lat": favoriteLats[indexPath.row], "long": favoriteLongs[indexPath.row]])
         
@@ -129,25 +129,18 @@ class FavoritesViewController: UIViewController, UITableViewDataSource, UITableV
     }
     
     func updateUserDefaults() {
-        UserDefaults.standard.set(self.favorites, forKey: "favorites")
-        UserDefaults.standard.set(self.favoriteLats, forKey: "favoriteLats")
-        UserDefaults.standard.set(self.favoriteLongs, forKey: "favoriteLongs")
+        UserDefaults.standard.set(favorites, forKey: "favorites")
+        UserDefaults.standard.set(favoriteLats, forKey: "favoriteLats")
+        UserDefaults.standard.set(favoriteLongs, forKey: "favoriteLongs")
         print(favorites)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.destination is ResultViewController {
             let vc = segue.destination as! ResultViewController
-            vc.resultNumber = self.resultNumber
-            vc.tacoResults = self.tacoResults
+            vc.resultNumber = resultNumber
+            vc.tacoResults = tacoResults
         }
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
-
 
 }

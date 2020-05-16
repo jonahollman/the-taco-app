@@ -26,7 +26,6 @@ class LAGuideViewController: UIViewController, UITableViewDelegate, UITableViewD
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
         top50Table.delegate = self
         top50Table.dataSource = self
         
@@ -99,9 +98,9 @@ class LAGuideViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     func fetchFavorites() {
         if UserDefaults.standard.object(forKey: "favorites") != nil {
-            self.favorites = UserDefaults.standard.object(forKey: "favorites") as! [String]
-            self.favoriteLats = UserDefaults.standard.object(forKey: "favoriteLats") as! [CLLocationDegrees]
-            self.favoriteLongs = UserDefaults.standard.object(forKey: "favoriteLongs") as! [CLLocationDegrees]
+            favorites = UserDefaults.standard.object(forKey: "favorites") as! [String]
+            favoriteLats = UserDefaults.standard.object(forKey: "favoriteLats") as! [CLLocationDegrees]
+            favoriteLongs = UserDefaults.standard.object(forKey: "favoriteLongs") as! [CLLocationDegrees]
         }
     }
     
@@ -130,7 +129,7 @@ class LAGuideViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.top50Dictionary.count
+        return top50Dictionary.count
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

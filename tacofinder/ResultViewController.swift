@@ -271,65 +271,52 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
     func setupHours(id: String, day: Int) {
         tacoHours.text = "Open     "
         appDelegate.apiClient.fetchBusiness(forId: id, locale: nil) { business in
-            if let business = business {
-                if business.hours!.count > 0 {
-                    if business.hours![0].open != nil {
-                        if business.hours![0].open!.count > day + 1 {
-                            if business.hours![0].open![day].end != nil {
-                                if let todayClose = business.hours![0].open![day].end {
-                                    var todayString = String()
-                                    if (todayClose.numberValue!) > 1200 {
-                                        todayString = String(Int((todayClose.numberValue!) - 1200)) + " PM"
-                                        if (todayClose.numberValue!) >= 2200 {
-                                            todayString.insert(":", at: (todayClose.index((todayClose.endIndex), offsetBy: -2)))
-                                        } else {
-                                            todayString.insert(":", at: (todayClose.index((todayClose.endIndex), offsetBy: -3)))
-                                        }
-                                    } else {
-                                        todayString = todayClose + " AM"
-                                        todayString.insert(":", at: (todayClose.index((todayClose.endIndex), offsetBy: -2)))
-                                    }
-                                    if todayString[todayString.startIndex] == "0" {
-                                        todayString.remove(at: todayString.startIndex)
-                                    }
-                                    if todayString == "0:00 AM" {
-                                        todayString = "Midnight"
-                                    } else if todayString == "12:00 PM" {
-                                        todayString = "Noon"
-                                    } else if todayString == "0:30 AM" {
-                                        todayString = "12:30 AM"
-                                    }
-                                    self.tacoHours.text = "Open until \(todayString)     "
-                                } else {
-                                    self.tacoHours.text = "Open     "
-                                }
-                            } else {
-                                self.tacoHours.text = "Open     "
-                            }
+            if let business = business,
+                (business.hours ?? []).count > 0,
+                business.hours![0].open != nil,
+                business.hours![0].open!.count > day + 1,
+                business.hours![0].open![day].end != nil,
+                let todayClose = business.hours![0].open![day].end {
+                    var todayString = String()
+                    if todayClose.numberValue! > 1200 {
+                        todayString = String(todayClose.numberValue! - 1200) + " PM"
+                        if todayClose.numberValue! >= 2200 {
+                            todayString.insert(":", at: (todayClose.index((todayClose.endIndex), offsetBy: -2)))
                         } else {
-                            self.tacoHours.text = "Open     "
+                            todayString.insert(":", at: (todayClose.index((todayClose.endIndex), offsetBy: -3)))
                         }
                     } else {
-                        self.tacoHours.text = "Open     "
+                        todayString = todayClose + " AM"
+                        todayString.insert(":", at: (todayClose.index((todayClose.endIndex), offsetBy: -2)))
                     }
-                } else {
-                    self.tacoHours.text = "Open     "
-                }
+                    if todayString[todayString.startIndex] == "0" {
+                        todayString.remove(at: todayString.startIndex)
+                    }
+                    if todayString == "0:00 AM" {
+                        todayString = "Midnight"
+                    } else if todayString == "12:00 PM" {
+                        todayString = "Noon"
+                    } else if todayString == "0:30 AM" {
+                        todayString = "12:30 AM"
+                    }
+                    self.tacoHours.text = "Open until \(todayString)     "
+            } else {
+                self.tacoHours.text = "Open     "
             }
         }
     }
     
     func updateUserDefaults() {
-        UserDefaults.standard.set(self.favorites, forKey: "favorites")
-        UserDefaults.standard.set(self.favoriteLats, forKey: "favoriteLats")
-        UserDefaults.standard.set(self.favoriteLongs, forKey: "favoriteLongs")
+        UserDefaults.standard.set(favorites, forKey: "favorites")
+        UserDefaults.standard.set(favoriteLats, forKey: "favoriteLats")
+        UserDefaults.standard.set(favoriteLongs, forKey: "favoriteLongs")
         print("Favorites: \(favorites)")
     }
     
     @IBAction func viewOnYelp(_ sender: Any) {
         print(tacoResults[resultNumber].id as Any)
         
-        UIApplication.shared.open(URL(string: tacoLink)!, options: [:]) { (success) in
+        UIApplication.shared.open(URL(string: tacoLink)!, options: [:]) { _ in
             print("Opened Yelp site: \(self.tacoLink)")
             Mixpanel.mainInstance().track(event: "Viewed on Yelp", properties: ["name": self.tacoResults[self.resultNumber].name!, "city": (self.tacoResults[self.resultNumber].location?.city)!, "state": (self.tacoResults[self.resultNumber].location?.state)!])
         }
@@ -339,8 +326,6 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
     @IBAction func callTaco(_ sender: Any) {
         let phoneurl = URL(string: "tel://\(phoneNumber)")
         print("Phone: \(phoneurl!)")
-
-        // Are you sure you want to call?
         
         let phonealertController = UIAlertController(
             title: "Call \(tacoResults[resultNumber].name!)?",
@@ -351,41 +336,41 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         
         phonealertController.addAction(phonecancelAction)
         
-        let callAction = UIAlertAction(title: "Call", style: .default) { (action) in
+        let callAction = UIAlertAction(title: "Call", style: .default) { _ in
             Mixpanel.mainInstance().track(event: "Called Business", properties: ["name": self.tacoResults[self.resultNumber].name!, "city": (self.tacoResults[self.resultNumber].location?.city)!, "state": (self.tacoResults[self.resultNumber].location?.state)!])
-            UIApplication.shared.open(phoneurl!, completionHandler: { (true) in
+            UIApplication.shared.open(phoneurl!, completionHandler: { _ in
             })
         }
         
         phonealertController.addAction(callAction)
         
-        self.present(phonealertController, animated: true, completion: nil)
+        present(phonealertController, animated: true, completion: nil)
     }
     
     @IBAction func goToTaco(_ sender: Any) {
         
         let coordinate = CLLocationCoordinate2DMake((tacoLocation?.latitude)!, (tacoLocation?.longitude)!)
-        let placemark:MKPlacemark = MKPlacemark(coordinate: coordinate, addressDictionary: nil)
-        let mapItem:MKMapItem = MKMapItem(placemark: placemark)
+        let placemark = MKPlacemark(coordinate: coordinate, addressDictionary: nil)
+        let mapItem = MKMapItem(placemark: placemark)
         mapItem.name = "\(self.tacoName.text!)"
         
-        Mixpanel.mainInstance().track(event: "Pressed Go", properties: ["from": "Individual Result", "name": self.tacoResults[self.resultNumber].name!, "city": (self.tacoResults[self.resultNumber].location?.city)!, "state": (self.tacoResults[self.resultNumber].location?.state)!])
+        Mixpanel.mainInstance().track(event: "Pressed Go", properties: ["from": "Individual Result", "name": tacoResults[resultNumber].name!, "city": (tacoResults[resultNumber].location?.city)!, "state": (tacoResults[resultNumber].location?.state)!])
         
-        let launchOptions:NSDictionary = NSDictionary(object: MKLaunchOptionsDirectionsModeWalking, forKey: MKLaunchOptionsDirectionsModeKey as NSCopying)
+        let launchOptions = NSDictionary(object: MKLaunchOptionsDirectionsModeWalking, forKey: MKLaunchOptionsDirectionsModeKey as NSCopying)
         
-        let currentLocationMapItem:MKMapItem = MKMapItem.forCurrentLocation()
+        let currentLocationMapItem = MKMapItem.forCurrentLocation()
         
         MKMapItem.openMaps(with: [currentLocationMapItem, mapItem], launchOptions: launchOptions as? [String : AnyObject])
     }
     
     @IBAction func nextResult(_ sender: Any) {
-        self.resultNumber += 1
+        resultNumber += 1
         print("result number: \(resultNumber)")
-        if self.resultNumber <= 19 {
+        if resultNumber <= 19 {
             setupResult()
-            Mixpanel.mainInstance().track(event: "Clicked Next", properties: ["Result number": self.resultNumber])
+            Mixpanel.mainInstance().track(event: "Clicked Next", properties: ["Result number": resultNumber])
         } else {
-            self.resultNumber = 0
+            resultNumber = 0
             setupResult()
             Mixpanel.mainInstance().track(event: "Reached 20 Results")
         }
@@ -393,25 +378,20 @@ class ResultViewController: UIViewController, MKMapViewDelegate, CLLocationManag
 
     @IBAction func goHome(_ sender: Any) {
         let home = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "splash") as! SplashViewController
-        
-        self.present(home, animated: true, completion: nil)
+        home.modalPresentationStyle = .fullScreen
+        present(home, animated: true, completion: nil)
     }
     
     @IBAction func goToFavorites(_ sender: Any) {
         let favorites = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "favorites") as! FavoritesViewController
-        favorites.resultNumber = self.resultNumber
-        favorites.tacoResults = self.tacoResults
+        favorites.modalPresentationStyle = .fullScreen
+        favorites.resultNumber = resultNumber
+        favorites.tacoResults = tacoResults
         
         Mixpanel.mainInstance().track(event: "Viewed Favorites")
         
-        self.present(favorites, animated: true, completion: nil)
+        present(favorites, animated: true, completion: nil)
     }
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
 
 }
 
@@ -421,6 +401,5 @@ extension String {
         formatter.numberStyle = .decimal
         let int = formatter.number(from: self)! as! Int
         return int
-        
     }
 }

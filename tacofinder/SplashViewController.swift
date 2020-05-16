@@ -303,6 +303,7 @@ class SplashViewController: UIViewController, CLLocationManagerDelegate {
     
     @IBAction func goToLAGuide(_ sender: Any) {
         let laGuide = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "laGuide")
+        laGuide.modalPresentationStyle = .fullScreen
         
         if UserDefaults.standard.object(forKey: "laTop50") == nil {
             let errorAlert = UIAlertController(title: "Uh oh", message: "We're having trouble finding you tacos. Check your internet connection and try again.", preferredStyle: .alert)
